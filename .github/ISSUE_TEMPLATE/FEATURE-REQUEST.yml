@@ -1,0 +1,36 @@
+name: "💡 Feature Request"
+description: Create a new ticket for a new feature request
+title: "feat 💡 <title>"
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Expected Behavior
+        Describe the expected behavior here.
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Specifications
+        As a <user>, I would like to <action> so that <reason>.
+
+        **Features:**
+        - describe feature details here.
+
+        **Development Tasks:**
+        - [ ] Task 1
+        - [ ] Task 2
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Dependencies
+        List any dependencies that are required for this feature by providing links to the issues or repositories.
+
+  - type: markdown
+    attributes:
+      value: |
+        ### References
+        List any references that are related to this feature request.

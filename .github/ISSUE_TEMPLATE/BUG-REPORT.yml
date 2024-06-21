@@ -1,0 +1,45 @@
+name: "👾 Bug Report"
+description: Create a new ticket for a bug.
+title: "fix 👾 <title>"
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Description
+        A clear and concise description of what the bug is.
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Steps To Reproduce
+        1. Log in...
+        2. Ensure that...
+        3. Allow a long period of inactivity to pass...
+        4. Observe that...
+        5. Attempt to log in...
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Current Behavior
+        - After the period of inactivity...
+        - When the user tries to log in using another method...
+        - This causes a bug due to...
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Expected Behavior
+        - After a long period of inactivity...
+        - When a user logs in successfully...
+        - This ensures that only...
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Environment
+        - Platform: PC
+        - Node: v18.18.0
+        - Browser: Chrome 126.0.6478.56
