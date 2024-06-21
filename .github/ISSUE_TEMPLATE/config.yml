@@ -1,5 +1,5 @@
 blank_issues_enabled: false
-contact_links:
+issue_template:
   - name: 👾 Bug Report
     description: Report a bug or issue with the project.
     labels: ["bug"]
