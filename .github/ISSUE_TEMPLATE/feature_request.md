@@ -1,8 +1,17 @@
+---
+name: 💡 Feature Request
+about: Create a new ticket for a new feature request
+title: ''
+labels: 'enhancement'
+assignees: ''
+
+---
+
 ### Expected Behavior
 Describe the expected behavior here.
 
 ### Specifications
-As a <user>, I would like to <action> so that <reason>.
+As a `user`, I would like to `action` so that `reason`.
 
 **Features:**
 - describe feature details here.

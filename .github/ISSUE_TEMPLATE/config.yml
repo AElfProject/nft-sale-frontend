@@ -3,8 +3,8 @@ issue_template:
   - name: 👾 Bug Report
     description: Report a bug or issue with the project.
     labels: ["bug"]
-    template: BUG-REPORT.md
+    template: bug_report.md
   - name: 💡 Feature Request
-    description: Create a new ticket for a new feature request
+    description: Create a new ticket for a new feature request.
     labels: ["enhancement"]
-    template: FEATURE-REQUEST.md
+    template: feature_request.md

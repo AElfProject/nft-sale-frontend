@@ -1,3 +1,12 @@
+---
+name: 👾 Bug Report
+about: Report a bug or issue with the project.
+title: ''
+labels: 'bug'
+assignees: ''
+
+---
+
 ### Description
 A clear and concise description of what the bug is.
 
