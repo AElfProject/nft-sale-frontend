@@ -1,1 +1,10 @@
 blank_issues_enabled: false
+contact_links:
+  - name: 👾 Bug Report
+    description: Report a bug or issue with the project.
+    labels: ["bug"]
+    template: BUG-REPORT.md
+  - name: 💡 Feature Request
+    description: Create a new ticket for a new feature request
+    labels: ["enhancement"]
+    template: FEATURE-REQUEST.md
