@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+import "aelf/core.proto";
+import "aelf/options.proto";
+import "google/protobuf/empty.proto";
+
+// The namespace of this class
+option csharp_namespace = "AElf.Contracts.NFTMarketplace";
+
+service NFTMarketplace {
+  // The name of the state class the smart contract is going to use to access
+  // blockchain state
+  option (aelf.csharp_state) = "AElf.Contracts.NFTMarketplace.NFTMarketplaceState";
+
+  // Actions -> Methods that change state of smart contract
+  // This method sets up the initial state of the NFT marketplace smart contract
+  rpc Initialize(google.protobuf.Empty) returns (google.protobuf.Empty);
+  
+  // This method allows a user to create a new NFT
+  rpc CreateNFT(CreateNFTInput) returns (google.protobuf.Empty);
+  
+  // This method allows a user to buy an NFT by transferring ownership and funds
+  rpc BuyNFT(BuyNFTInput) returns (google.protobuf.Empty);
+
+  // Views -> Methods that do not change state of smart contract
+  // This method allows a user to fetch a list of NFTs that are currently on sale
+  rpc GetListOfNFTsOnSale(google.protobuf.Empty) returns (NFTList) {
+    option (aelf.is_view) = true;
+  }
+  
+  // This method allows a user to fetch a list of all NFTs
+  rpc GetListOfAllNFTs(google.protobuf.Empty) returns (NFTList) {
+    option (aelf.is_view) = true;
+  }
+
+  // This method allows a user to fetch a list of NFTs owned by a specific address
+  rpc GetListOfNFTOfAnAddress(aelf.Address) returns (NFTList) {
+    option (aelf.is_view) = true;
+  }
+
+  // This method allows a user to fetch the details of a specific NFT by its ID
+  rpc GetDetailsOfAnNFT(aelf.Int64Value) returns (NFT) {
+    option (aelf.is_view) = true;
+  }
+}
+
+// Message definitions
+message NFT {
+  int64 id = 1;
+  aelf.Address creator = 2;
+  aelf.Address owner = 3;
+  string name = 4;
+  string description = 5;
+  aelf.Int64Value price = 6;
+  bool onSale = 7;
+}
+
+message CreateNFTInput {
+  string name = 1;
+  string description = 2;
+  aelf.Int64Value price = 3;
+}
+
+message BuyNFTInput {
+  int64 nftId = 1;
+}
+
+message NFTList {
+  repeated NFT nfts = 1;
+}
