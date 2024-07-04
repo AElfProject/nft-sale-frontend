@@ -1,0 +1,93 @@
+/* This ensures that all children of form-wrapper (including form-container) are centered */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full height of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative; /* Added to ensure proper positioning */
+}
+
+/* This will center the content horizontally and manage the width of the form */
+.form-container {
+  background: #ffffff;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+
+/* Add additional styles for the form elements below */
+
+/* Styles for form title */
+.form-title {
+  margin-bottom: 1em;
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Styles for form fields */
+.input-group label {
+  display: block;
+  margin-bottom: 0.5em;
+  color: #333;
+  font-size: 18px;
+}
+
+.input-group input,
+.input-group textarea {
+  width: calc(100% - 1em); /* Subtract padding from the width */
+  margin-bottom: 1em;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: #888;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* This will center the buttons horizontally */
+  width: 100%; /* Ensure the container takes up the full width */
+  gap: 10px; /* This adds space between your buttons */
+}
+
+/* Styles for buttons */
+.submit-btn,
+.return-btn {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.return-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.return-btn:hover {
+  background-color: #5a6268;
+}

@@ -1,0 +1,404 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-bg-color: #0d0c22; /* Dark background color */
+  --secondary-bg-color: #0d0c22; /* Slightly lighter for card backgrounds */
+  --primary-text-color: #e6e6e6; /* Light text color */
+  --secondary-text-color: #a9a9a9; /* Secondary text for less important info */
+  --accent-color: #4ecca3; /* Accent color for buttons or interactive elements */
+}
+
+html,
+body {
+  min-height: 100vh;
+  background-color: var(--primary-bg-color); /* Full body background color */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Use minimum height for flex children */
+}
+
+.app-header h1 {
+  font-size: 2.5rem; /* Increase font size */
+  color: var(--primary-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.app-header .subtitle {
+  color: var(--secondary-text-color);
+  font-size: 1.2rem; /* Adjust font size */
+}
+
+/* Full container for layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 0 20px;
+}
+
+.dao-logo {
+  /*border-radius: 50%; /* Makes the image rounded */
+  width: 100px; /* Replace with the desired size */
+  /*height: 100px; /* Replace with the desired size */
+  padding-bottom: 50px;
+}
+
+.collaboration-message {
+  color: var(--electric-blue); /* Accent color for the text */
+  text-align: center; /* Center align the text */
+  font-weight: bold; /* Bold text */
+  font-size: 1.3rem; /* Larger font size */
+  display: block; /* Block display to take up the full width */
+  width: 100%;
+  margin-left: 30%;
+}
+
+.button {
+  padding: 10px 20px; /* Add more padding for a larger button */
+  margin: 0 5px; /* Add some margin to the left and right */
+  background-color: var(--accent-color); /* Use the accent color */
+  color: white; /* White text for better visibility */
+  border: none; /* Remove the border */
+  border-radius: 5px; /* Slightly rounded corners */
+  cursor: pointer; /* Change cursor to indicate it's clickable */
+  transition: background-color 0.2s; /* Smooth background color transition */
+}
+
+.button-primary {
+  background-color: var(--electric-blue);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 113, 188, 0.3); /* Adjust the color and radius to your liking */
+}
+
+.button-primary:hover {
+  background-color: var(--neon-blue);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--electric-blue);
+  border: 2px solid var(--electric-blue);
+  padding: 8px 18px;
+  border-radius: 5px;
+}
+
+.button-secondary:hover {
+  background-color: var(--white);
+  color: var(--dark-navy);
+}
+
+.proposal-card {
+  background: var(--secondary-bg-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(65, 184, 131, 0.45);
+}
+
+/* Ensuring text is legible */
+.text-shadow {
+  text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling the header */
+.header {
+  background: var(--secondary-bg-color);
+  padding: 0rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.title-container {
+  padding-top: 20px;
+}
+
+.connect-wallet-btn,
+.header-button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #252838;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.connect-wallet-btn:focus,
+.connect-wallet-btn:active .header-button:focus,
+.header-button:active {
+  background: #249e75;
+}
+
+/* Button styling */
+.header .connect-wallet-btn {
+  padding: 12px 20px;
+  background-color: #333; /* Change to your preferred color */
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.DAO-info h1 {
+  font-size: 2.8rem; /* Larger for main heading */
+  font-weight: 700; /* Bolder for importance */
+  margin-bottom: 1rem;
+}
+
+.DAO-info .collaboration-message:before {
+  content: "🤝"; /* Example emoji icon before the message */
+  margin-right: 4px;
+}
+
+/* Hover Effects */
+.DAO-info .collaboration-message:hover {
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.proposals {
+  margin-top: 20px;
+}
+
+.proposal-card {
+  margin-bottom: 20px;
+}
+
+.header .connect-wallet-btn:hover {
+  background-color: #367c39; /* Darker shade on hover */
+}
+
+/* Additional responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column; /* Stack elements in a column on smaller screens */
+    align-items: flex-end; /* Align items to the right */
+  }
+
+  .header .connect-wallet-btn {
+    margin-top: 0.5rem; /* Add some space between elements when stacked */
+  }
+}
+
+.footer {
+  background-color: #333; /* Dark background for the footer */
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer p {
+  margin: 5px 0; /* Spacing between footer items */
+}
+
+.subtitle {
+  margin-bottom: 2em; /* Space between subtitle and buttons */
+  /* Style your subtitle as needed */
+}
+
+.fetch-proposals-button {
+  margin-left: 950px;
+  background: #000;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.proposal-card .button-group {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem; /* This adds space between the buttons */
+}
+
+.proposals-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Adjust as necessary to align as desired */
+  gap: 20px; /* This adds space between the proposals */
+  margin-bottom: 20px; /* Space below the proposals container */
+}
+
+/* Modern Card Design */
+.proposal-card {
+  /* Existing styles */
+  border: none; /* Remove borders for a cleaner look */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.proposal-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.proposal-card button {
+  flex: 0 0 auto; /* Do not grow or shrink */
+  margin: 1rem; /* Add some margin around buttons */
+  padding: 0.5rem 1rem; /* Add padding inside buttons */
+  background-color: #4ecca3; /* Use your accent color */
+  color: #ffffff; /* White text color for better readability */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.proposal-card button:first-child {
+  margin-bottom: 1rem;
+}
+
+/* Responsive Grid Layout */
+.proposals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns */
+  gap: 1em; /* Space between proposals */
+  margin-bottom: 1em; /* Space below the entire grid */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1000px) {
+  .proposal-card {
+    max-width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 600px) {
+  .proposal-card {
+    max-width: 100%;
+  }
+}
+
+.proposals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px; /* Or any amount of padding you see fit */
+}
+
+/* Add some padding and margin to the main heading */
+h1 {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+/* Style the Fetch Proposals button to align right */
+.fetch-proposals-container {
+  text-align: right;
+}
+
+.fetch-proposals-btn {
+  padding: 10px 20px;
+  background-color: #000; /* Or any color that fits your design */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.fetch-proposals-btn:hover {
+  background-color: #444; /* Darken button on hover for interaction feedback */
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column; /* Stacks title and buttons vertically on smaller screens */
+    padding: 1rem; /* Reduces padding on smaller screens */
+  }
+
+  .header .button {
+    width: 100%; /* Full width buttons on smaller screens */
+    margin-top: 0.5rem; /* Adds space between buttons when stacked */
+  }
+  .proposals-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fetch-proposals-btn {
+    margin-top: 10px; /* Add some space between the heading and the button on smaller screens */
+  }
+}
+
+.nft-collection-container .nft-collection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px 20px;
+  padding: 20px;
+}
+.nft-card {
+  position: relative;
+  padding: 10px;
+  max-width: 200px;
+  background-color: #242634;
+  border-radius: 20px;
+}
+.nft-card img {
+  height: 250px;
+  width: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.nft-card .nft-info {
+  height: 40px;
+  position: absolute;
+  bottom: 15px;
+  left: 10px;
+  width: calc(100% - 20px);
+  backdrop-filter: blur(5px);
+  background-color: #fff1;
+  border-radius: 0 0 12px 12px;
+}
