@@ -1,3 +1,21 @@
+# To initialise repo with basic files
+### Files included:  
+1. README.md  
+2. LICENSE  
+3. .github/ISSUE_TEMPLATE/bug_report.md  
+4. .github/ISSUE_TEMPLATE/feature_request.md  
+5. .github/ISSUE_TEMPLATE/config.yml  
+6. .github/CODE_OF_CONDUCT.md  
+7. .github/workflows/publish-package-prod.yml  
+
+## Setup
+Run the following command to initialize your repo with the above files:
+```shell
+curl https://raw.githubusercontent.com/AElfProject/aelf-dapp-factory/master/basic-patch.patch | git apply
+```
+
+### You may delete every content above and use this README.md in your repository.
+
 # Project Name
 
 Brief Project Description
