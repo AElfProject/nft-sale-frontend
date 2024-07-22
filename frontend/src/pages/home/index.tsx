@@ -1,7 +1,9 @@
-import "./HomeDAO.css";
-import { NFT_IMAGES } from "./utils/constant";
+import { useNavigate } from "react-router-dom";
+import "./home.scss";
+import { NFT_IMAGES } from "@/lib/constant";
+import { Button } from "@/components/ui/button";
 
-function HomeDAO() {
+const HomePage = () => {
   // const voteYes = async (index: number) => {
   //   //Step F - Write Vote Yes Logic
   // };
@@ -36,13 +38,15 @@ function HomeDAO() {
   //   }
   // };
 
+  const navigate = useNavigate();
+
   return (
-    <div className="App">
-      <div className="DAO-info container">
+    <div className="home-container">
+      {/* <div className="marketplace-info container">
         <div className="left-aligned">
           <header className="app-header">
             <div className="title-container">
-              <h1>Welcome to NFT MarketPlace</h1>
+              <h1>Welcome to NFT Create & Transfer Platform</h1>
 
               <p className="subtitle">
                 NFT MarketPlace aims to empower developers with the foundation
@@ -57,20 +61,50 @@ function HomeDAO() {
             <div className="header"></div>
           </header>
         </div>
+      </div> */}
+      <div className="dashboard-container container">
+        <div className="dashboard-card">
+           <h3>Total Available NFT</h3>
+           <p>5 NFTs</p>
+        </div>
+        <div className="dashboard-card">
+           <h3>Total Transfer NFT</h3>
+           <p>2 NFTs</p>
+        </div>
+        <div className="dashboard-card">
+           <h3>Total Received NFT</h3>
+           <p>3 NFTs</p>
+        </div>
       </div>
       <div className="nft-collection-container">
-        <h2>NFT Collection</h2>
+        <div className="nft-collection-head">
+          <h2>Your NFT Collection</h2>
+          <Button
+            className="header-button"
+            onClick={() => navigate("/create-nft")}
+          >
+            Create NFT
+          </Button>
+        </div>
+
         <div className="nft-collection">
-          {NFT_IMAGES.map((image, index) => (
+          {NFT_IMAGES.slice(0, 5).map((image, index) => (
             <div className="nft-card" key={index}>
               <img src={image} alt={"nft- image" + index} />
               <div className="nft-info"></div>
+              <div className="buy-container">
+                <Button
+                  onClick={() => navigate(`/transfer-nft?nft-id=${index}`)}
+                >
+                  Transfer NFT
+                </Button>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default HomeDAO;
+export default HomePage;

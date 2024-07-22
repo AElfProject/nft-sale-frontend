@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-bg-color: #0d0c22; /* Dark background color */
+  --secondary-bg-color: #0d0c22; /* Slightly lighter for card backgrounds */
+  --primary-text-color: #e6e6e6; /* Light text color */
+  --secondary-text-color: #a9a9a9; /* Secondary text for less important info */
+  --accent-color: #4ecca3; /* Accent color for buttons or interactive elements */
+  --app-purple: #646cff;
+  --app-dark-color: #333646;
+  --app-font: "Cabin", sans-serif;
+}
+
+html,
+body {
+  min-height: 100vh;
+  background-color: var(--primary-bg-color); /* Full body background color */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  font-family: var(--app-font);
+  display: flex;
+  flex-direction: column;
+}
+body::-webkit-scrollbar{
+  display: none;
+}
+
+button {
+  border: none;
+  color: var(--primary-text-color);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--app-purple);
+  cursor: pointer;
+  transition: all 0.25s;
+  border-radius: 7px;
+}
+
+button:active {
+  opacity: 0.8;
+}
+
+button.outline {
+  border: 1px solid var(--app-dark-color);
+  color: var(--primary-text-color);
+  background-color: transparent;
+}
+
+button.outline:hover {
+  border-color: var(--app-purple);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 15px;
+}

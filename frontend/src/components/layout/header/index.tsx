@@ -1,12 +1,14 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
 import detectProvider from "@portkey/detect-provider";
-// import useDAOSmartContract from "@/useDAOSmartContract";
+import { useNavigate } from "react-router-dom";
+import "./header.scss";
+// import useNFTSmartContract from "@/useNFTSmartContract";
 
-const ProfileButton = (props: PropsWithChildren) => (
+const ProfileButton = ({ onClick }: { onClick: () => void }) => (
   <svg
-    {...props}
+    onClick={onClick}
     stroke="currentColor"
     fill="currentColor"
     stroke-width="0"
@@ -36,7 +38,7 @@ const Header = ({
   setCurrentWalletAddress: (val: string) => void;
 }) => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  //   const nftContract = useDAOSmartContract(provider);
+    // const nftContract = useNFTSmartContract(provider);
 
   const connect = async (walletProvider?: IPortkeyProvider) => {
     //Step B - Connect Portkey Wallet
@@ -47,7 +49,7 @@ const Header = ({
       method: MethodsBase.REQUEST_ACCOUNTS,
     });
     console.log("accounts", accounts);
-    const account = accounts?.tDVV && accounts?.tDVV[0];
+    const account = accounts?.tDVW && accounts?.tDVW[0];
     console.log("account", account);
     if (account) {
       setCurrentWalletAddress(account);
@@ -70,7 +72,7 @@ const Header = ({
         });
         if (!accounts) throw new Error("No accounts");
 
-        const account = accounts?.tDVV?.[0];
+        const account = accounts?.tDVW?.[0];
 
         if (!account) throw new Error("No account");
         console.log("accounts", accounts);
@@ -93,25 +95,32 @@ const Header = ({
     if (!provider) init();
   }, [provider]);
 
+  const navigate = useNavigate();
+
   return (
-    <div className="header">
+    <header className="app-navbar">
       <div className="container">
-        <div className="logo">
-          <img src="/src/assets/aelf_logo.png" alt="Aelf Logo" />
-        </div>
-        <div className="search-bar"></div>
+        <img
+          src="/src/assets/aelf_logo.png"
+          alt="Aelf Logo"
+          onClick={() => navigate("/")}
+        />
         <div className="right-wrapper">
-          <Button onClick={() => connect()} className="header-button">
+          <Button onClick={() => connect()}>
             {isConnected
               ? currentWalletAddress?.slice(0, 5) +
                 "....." +
                 currentWalletAddress?.slice(-5)
               : "Connect Wallet"}
           </Button>
-          {isConnected && <ProfileButton />}
+          {isConnected && (
+            <Button className="profile-button">
+              <ProfileButton onClick={() => navigate("/profile")} />
+            </Button>
+          )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

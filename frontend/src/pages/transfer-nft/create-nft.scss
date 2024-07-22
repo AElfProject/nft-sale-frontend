@@ -1,0 +1,115 @@
+/* This ensures that all children of form-wrapper (including form-container) are centered */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px); /* Full height of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative; /* Added to ensure proper positioning */
+  .form-container {
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--app-dark-color);
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    .form-title {
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 24px;
+      color: white;
+    }
+
+    .nft-card {
+      position: relative;
+      padding: 10px;
+      max-width: 200px;
+      background-color: #242634;
+      border-radius: 20px;
+      height: 255px;
+      margin: 0 auto;
+      margin-bottom: 2rem;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5em;
+      color: white;
+      font-size: 18px;
+    }
+
+    .input-group input {
+      width: calc(100% - 1em); /* Subtract padding from the width */
+      margin-bottom: 1em;
+      padding: 0.5em;
+      padding-left: 15px;
+      border: 1px solid var(--app-dark-color);
+      border-radius: 7px;
+      font-size: 16px;
+      line-height: 1.5;
+      outline: none;
+      background-color: transparent;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus {
+      border-color: var(--app-purple);
+      box-shadow: 0 0 3px 2px #646cff30;
+    }
+
+    .input-group input::placeholder,
+    .input-group textarea::placeholder {
+      color: #888;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center; /* This will center the buttons horizontally */
+      width: 100%; /* Ensure the container takes up the full width */
+      gap: 10px; /* This adds space between your buttons */
+      margin-top: 20px;
+
+      /* Styles for buttons */
+      .submit-btn,
+      .return-btn {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .submit-btn {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .return-btn {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .return-btn:hover {
+        background-color: #5a6268;
+      }
+    }
+  }
+}

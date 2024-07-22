@@ -1,16 +1,17 @@
-import "./App.css";
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import CreateProposal from "./CreateProposal";
-import MarketPlace from "./marketPlace";
 import ProfilePage from "./pages/profile";
-import { Fragment, useState } from "react";
 import Header from "./components/layout/header";
+import HomePage from "./pages/home";
+import "./app.scss";
+import CreateNftPage from "./pages/create-nft";
+import TransferNftPage from "./pages/transfer-nft";
 
-function App() {
+const App = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [currentWalletAddress, setCurrentWalletAddress] = useState<string>();
   return (
-    <Fragment>
+    <div className="app-layout">
       <Header
         isConnected={isConnected}
         currentWalletAddress={currentWalletAddress}
@@ -18,19 +19,20 @@ function App() {
         setCurrentWalletAddress={setCurrentWalletAddress}
       />
       <Routes>
-        <Route path="/" element={<MarketPlace />}></Route>
-        <Route path="/create-proposal" element={<CreateProposal />}></Route>
-        {isConnected && currentWalletAddress && <Route
-          path="/profile"
-          element={
-            <ProfilePage
-              currentWalletAddress={currentWalletAddress}
-            />
-          }
-        ></Route>}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/create-nft" element={<CreateNftPage />} />
+        <Route path="/transfer-nft" element={<TransferNftPage />} />
+        {isConnected && currentWalletAddress && (
+          <Route
+            path="/profile"
+            element={
+              <ProfilePage currentWalletAddress={currentWalletAddress} />
+            }
+          />
+        )}
       </Routes>
-    </Fragment>
+    </div>
   );
-}
+};
 
 export default App;

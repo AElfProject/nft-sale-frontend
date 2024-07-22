@@ -1,49 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
+import { IPortkeyProvider } from "@portkey/provider-types";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import "./CreateProposal.css";
-import useDAOSmartContract from "./useDAOSmartContract";
-import detectProvider from "@portkey/detect-provider";
+import "./create-nft.scss";
 
-interface IProposalInput {
-  creator: string;
-  title: string;
-  description: string;
-  voteThreshold: number;
-}
+import detectProvider from "@portkey/detect-provider";
+import { Button } from "@/components/ui/button";
+// import useNFTSmartContract from "@/useNFTSmartContract";
 
 const formSchema = z.object({
   address: z.string(),
   title: z.string(),
-  description: z.string(),
-  voteThreshold: z.coerce.number(),
+  symbol: z.string(),
 });
 
-export default function CreateProposal() {
+const CreateNftPage = () => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  const [createProposalInput, setCreateProposalInput] =
-    useState<IProposalInput>();
-  const DAOContract = useDAOSmartContract(provider);
+//   const nftContract = useNFTSmartContract(provider);
 
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const { currentWalletAddress } = location.state;
 
   const handleReturnClick = () => {
     navigate("/");
@@ -61,17 +48,19 @@ export default function CreateProposal() {
     if (!provider) init();
   }, [provider]);
 
-  //Step D - Configure Proposal Form
+  //Step D - Configure NFT Form
   const form = useForm<z.infer<typeof formSchema>>({});
 
-  //Step E - Write Create Proposal Logic
-  function onSubmit(values: z.infer<typeof formSchema>) {}
+  //Step E - Write Create NFT Logic
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("values",values)
+  }
 
   return (
     <div className="form-wrapper">
       <div className="form-container">
         <div className="form-content">
-          <h2 className="form-title">Create Proposal</h2>
+          <h2 className="form-title">Create a New  NFT</h2>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -98,30 +87,15 @@ export default function CreateProposal() {
               <div className="input-group">
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="symbol"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Symbol</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Proposal Description"
+                          placeholder="Enter Symbol"
                           {...field}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="input-group">
-                <FormField
-                  control={form.control}
-                  name="voteThreshold"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Vote Threshold</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Set Vote Threshold" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -136,9 +110,9 @@ export default function CreateProposal() {
                 >
                   Return
                 </button>
-                <button type="submit" className="submit-btn">
-                  Submit
-                </button>
+                <Button type="submit" className="submit-btn">
+                  Create
+                </Button>
               </div>
             </form>
           </Form>
@@ -147,3 +121,5 @@ export default function CreateProposal() {
     </div>
   );
 }
+
+export default CreateNftPage

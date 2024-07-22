@@ -1,7 +1,7 @@
 import { IPortkeyProvider, IChain } from "@portkey/provider-types";
 import { useEffect, useState } from "react";
 
-function useDAOSmartContract(provider: IPortkeyProvider | null) {
+const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
   const [smartContract, setSmartContract] =
     useState<ReturnType<IChain["getContract"]>>();
 
@@ -9,6 +9,6 @@ function useDAOSmartContract(provider: IPortkeyProvider | null) {
   useEffect(() => {});
 
   return smartContract;
-}
+};
 
-export default useDAOSmartContract;
+export default useNFTSmartContract;
