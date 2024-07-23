@@ -1,79 +1,61 @@
 import { useNavigate } from "react-router-dom";
+import { MethodsBase, IPortkeyProvider } from "@portkey/provider-types";
+
 import "./home.scss";
 import { NFT_IMAGES } from "@/lib/constant";
 import { Button } from "@/components/ui/button";
+import useNFTSmartContract from "@/hooks/useNFTSmartContract";
+import { useEffect, useState } from "react";
 
-const HomePage = () => {
-  // const voteYes = async (index: number) => {
-  //   //Step F - Write Vote Yes Logic
-  // };
-
-  // const voteNo = async (index: number) => {
-  //   try {
-  //     const accounts = await provider?.request({
-  //       method: MethodsBase.ACCOUNTS,
-  //     });
-
-  //     if (!accounts) throw new Error("No accounts");
-
-  //     const account = accounts?.tDVW?.[0];
-
-  //     if (!account) throw new Error("No account");
-
-  //     const createVoteInput: IVoteInput = {
-  //       voter: account,
-  //       proposalId: index,
-  //       vote: false,
-  //     };
-
-  //     await nftContract?.callSendMethod(
-  //       "VoteOnProposal",
-  //       account,
-  //       createVoteInput
-  //     );
-  //     alert("Voted on Proposal");
-  //     setHasVoted(true);
-  //   } catch (error) {
-  //     console.error(error, "=====error");
-  //   }
-  // };
-
+const HomePage = ({ provider }: { provider: IPortkeyProvider | null }) => {
   const navigate = useNavigate();
+  const nftContract = useNFTSmartContract(provider);
+  const [userNfts, setUserNfts] = useState<any[]>([]);
 
+  useEffect(() => {
+    // Step G - Use Effect to Fetch Proposals
+    const fetchNftDetails = async () => {
+      try {
+        const accounts = await provider?.request({
+          method: MethodsBase.ACCOUNTS,
+        });
+
+        if (!accounts) throw new Error("No accounts");
+
+        const account = accounts?.tDVW?.[0];
+
+        if (!account) throw new Error("No account");
+
+        const nftResponse = await nftContract?.callViewMethod(
+          "GetNFTBalance",
+          account
+        );
+
+        if (nftResponse && nftResponse.data && nftResponse.data.length > 0) {
+          setUserNfts(nftResponse.data);
+        }
+        // setProposals(proposalResponse?.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchNftDetails();
+  }, []);
   return (
     <div className="home-container">
-      {/* <div className="marketplace-info container">
-        <div className="left-aligned">
-          <header className="app-header">
-            <div className="title-container">
-              <h1>Welcome to NFT Create & Transfer Platform</h1>
-
-              <p className="subtitle">
-                NFT MarketPlace aims to empower developers with the foundation
-                of how NFT MarketPlace work
-              </p>
-
-              <p className="collaboration-message">
-                🚀 Brought to you by Aelf Developer Community
-              </p>
-            </div>
-            <div className="container"></div>
-            <div className="header"></div>
-          </header>
-        </div>
-      </div> */}
       <div className="dashboard-container container">
         <div className="dashboard-card">
-           <h3>Total Available NFT</h3>
-           <p>5 NFTs</p>
+          <h3>Total Available NFT</h3>
+          <p>5 NFTs</p>
         </div>
         <div className="dashboard-card">
-           <h3>Total Transfer NFT</h3>
-           <p>2 NFTs</p>
+          <h3>Total Transfer NFT</h3>
+          <p>2 NFTs</p>
         </div>
         <div className="dashboard-card">
-           <h3>Total Received NFT</h3>
-           <p>3 NFTs</p>
+          <h3>Total Received NFT</h3>
+          <p>3 NFTs</p>
         </div>
       </div>
       <div className="nft-collection-container">

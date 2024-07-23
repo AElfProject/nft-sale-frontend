@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
 import detectProvider from "@portkey/detect-provider";
 import { useNavigate } from "react-router-dom";
 import "./header.scss";
-// import useNFTSmartContract from "@/useNFTSmartContract";
+import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 
 const ProfileButton = ({ onClick }: { onClick: () => void }) => (
   <svg
     onClick={onClick}
     stroke="currentColor"
     fill="currentColor"
-    stroke-width="0"
+    strokeWidth="0"
     viewBox="0 0 24 24"
     height="1em"
     width="1em"
@@ -31,14 +31,41 @@ const Header = ({
   currentWalletAddress,
   setIsConnected,
   setCurrentWalletAddress,
+  provider,
+  setProvider,
 }: {
   isConnected: boolean;
   currentWalletAddress: string | undefined;
   setIsConnected: (val: boolean) => void;
   setCurrentWalletAddress: (val: string) => void;
+  provider: IPortkeyProvider | null;
+  setProvider: (p: IPortkeyProvider | null) => void;
 }) => {
-  const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-    // const nftContract = useNFTSmartContract(provider);
+  const nftContract = useNFTSmartContract(provider);
+
+  const initializeNftContract = async () => {
+    //Step C - Write Initialize Smart Contract and Join DAO Logic
+    try {
+      const accounts = await provider?.request({
+        method: MethodsBase.ACCOUNTS,
+      });
+      if (!accounts) throw new Error("No accounts");
+      const account = accounts?.tDVW?.[0];
+      if (!account) throw new Error("No account");
+
+      // if (!initialized) {
+      await nftContract?.callSendMethod("Initialize", account, {});
+      // setInitialized(true);
+      alert("NFT Contract Successfully Initialized");
+      // }
+
+      // await DAOContract?.callSendMethod("JoinDAO", account, account);
+      // setJoinedDAO(true);
+      // alert("Successfully Joined DAO");
+    } catch (error) {
+      console.error(error, "====error in initializeNftContract");
+    }
+  };
 
   const connect = async (walletProvider?: IPortkeyProvider) => {
     //Step B - Connect Portkey Wallet
@@ -48,9 +75,7 @@ const Header = ({
     )?.request({
       method: MethodsBase.REQUEST_ACCOUNTS,
     });
-    console.log("accounts", accounts);
     const account = accounts?.tDVW && accounts?.tDVW[0];
-    console.log("account", account);
     if (account) {
       setCurrentWalletAddress(account);
       setIsConnected(true);
@@ -106,6 +131,9 @@ const Header = ({
           onClick={() => navigate("/")}
         />
         <div className="right-wrapper">
+          <Button className="profile-button" onClick={initializeNftContract}>
+            initializeNftContract
+          </Button>
           <Button onClick={() => connect()}>
             {isConnected
               ? currentWalletAddress?.slice(0, 5) +

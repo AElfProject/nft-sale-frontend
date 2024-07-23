@@ -20,24 +20,40 @@
     display: flex;
     gap: 25px;
     width: 100%;
-    padding: 40px 0 0;
+    padding: 40px 15px 0;
     justify-content: space-between;
 
     .dashboard-card {
       height: 200px;
       width: 33%;
       background-color: #2426345e;
-      border:1px solid #242634;
+      border: 1px solid #242634;
       border-radius: 15px;
       padding: 20px;
 
-      h3{
-        font-size: 25px;
+      h3 {
+        font-size: calc(0.7vw + 15px);
         margin-bottom: 10px;
       }
 
-      p{
-        font-size: 18px;
+      p {
+        font-size: calc(0.5vw + 10px);
+      }
+    }
+    @media screen and (max-width: 768px) {
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .dashboard-card {
+        width: calc(50% - 10px);
+        &:last-child {
+          width: 100%;
+        }
+      }
+    }
+    @media screen and (max-width: 577px) {
+      .dashboard-card {
+          width: 100%;
       }
     }
   }
@@ -46,7 +62,7 @@
   .nft-collection-container {
     width: 100%;
     max-width: 1200px;
-    padding: 40px 0 100px;
+    padding: 40px 15px 100px;
 
     .nft-collection-head {
       display: flex;

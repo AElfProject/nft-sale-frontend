@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { IPortkeyProvider } from "@portkey/provider-types";
+
 import ProfilePage from "./pages/profile";
 import Header from "./components/layout/header";
 import HomePage from "./pages/home";
@@ -10,6 +12,8 @@ import TransferNftPage from "./pages/transfer-nft";
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [currentWalletAddress, setCurrentWalletAddress] = useState<string>();
+  const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
+
   return (
     <div className="app-layout">
       <Header
@@ -17,18 +21,27 @@ const App = () => {
         currentWalletAddress={currentWalletAddress}
         setIsConnected={setIsConnected}
         setCurrentWalletAddress={setCurrentWalletAddress}
+        setProvider={setProvider}
+        provider={provider}
       />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/create-nft" element={<CreateNftPage />} />
-        <Route path="/transfer-nft" element={<TransferNftPage />} />
+        <Route path="/" element={<HomePage provider={provider} />} />
         {isConnected && currentWalletAddress && (
-          <Route
-            path="/profile"
-            element={
-              <ProfilePage currentWalletAddress={currentWalletAddress} />
-            }
-          />
+          <Fragment>
+            <Route
+              path="/profile"
+              element={
+                <ProfilePage currentWalletAddress={currentWalletAddress} />
+              }
+            />
+            <Route
+              path="/create-nft"
+              element={
+                <CreateNftPage currentWalletAddress={currentWalletAddress} />
+              }
+            />
+            <Route path="/transfer-nft" element={<TransferNftPage />} />
+          </Fragment>
         )}
       </Routes>
     </div>
