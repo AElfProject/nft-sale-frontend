@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+import "aelf/core.proto";
+import "aelf/options.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "Protobuf/reference/acs12.proto";
+
+// The namespace of this class
+option csharp_namespace = "AElf.Contracts.nft_contract";
+
+service nft_contract {
+  option (aelf.csharp_state) = "AElf.Contracts.nft_contract.nft_contractState";
+  option (aelf.base) = "Protobuf/reference/acs12.proto";
+
+  rpc Initialize (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  rpc CreateNFTToken (CreateNFTTokenInput) returns (google.protobuf.Int64Value) {}
+
+  rpc TransferNFT (TransferNFTInput) returns (google.protobuf.Empty) {}
+
+  rpc BurnNFT (google.protobuf.Int64Value) returns (google.protobuf.Empty) {}
+
+  rpc GetNFTDetails (google.protobuf.Int64Value) returns (NFTDetails) {
+    option (aelf.is_view) = true;
+  }
+
+  rpc GetNFTBalance (aelf.Address) returns (google.protobuf.Int64Value) {
+    option (aelf.is_view) = true;
+  }
+
+  rpc GetOwner (google.protobuf.Int64Value) returns (google.protobuf.StringValue) {
+    option (aelf.is_view) = true;
+  }
+}
+
+// Define request message for CreateNFTToken
+message CreateNFTTokenInput {
+  string name = 1;
+  string symbol = 2;
+}
+
+// Define request message for TransferNFT
+message TransferNFTInput {
+  int64 token_id = 1;
+  aelf.Address to = 2;
+}
+
+// An event that will be emitted from contract method call when CreateNFT is called.
+message NFTCreated {
+  option (aelf.is_event) = true;
+  int64 nft_id = 1;
+}
+
+// An event that will be emitted from contract method call when CreateNFTCollection is called
+message NFTCollectionCreated {
+  option (aelf.is_event) = true;
+  int64 nft_id = 1;
+}
+
+// An event that will be emitted from contract method call when TransferNFT is called.
+message NFTTransferred {
+  option (aelf.is_event) = true;
+  int64 token_id = 1;
+  aelf.Address from = 2;
+  aelf.Address to = 3;
+}
+
+// An event that will be emitted from contract method call when BurnNFT is called.
+message NFTBurned {
+  option (aelf.is_event) = true;
+  int64 token_id = 1;
+  aelf.Address owner = 2;
+}
+
+// Define message for NFT details
+message NFTDetails {
+  int64 token_id = 1;
+  string name = 2;
+  string symbol = 3;
+  aelf.Address owner = 4;
+}
+
+// An event that will be emitted from contract method call when Deposit is called.
+message DepositEvent {
+  option (aelf.is_event) = true;
+  int64 amount = 1;
+  string symbol = 2;
+  aelf.Address from = 3;
+  aelf.Address to = 4;
+}
