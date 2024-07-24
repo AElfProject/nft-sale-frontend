@@ -51,7 +51,8 @@ const Header = ({
     )?.request({
       method: MethodsBase.REQUEST_ACCOUNTS,
     });
-    const account = accounts?.tDVW && accounts?.tDVW[0];
+    console.log("accounts", accounts);
+    const account = accounts?.AELF && accounts?.AELF[0];
     if (account) {
       setCurrentWalletAddress(account);
       setIsConnected(true);
@@ -68,22 +69,17 @@ const Header = ({
       }
       try {
         //Fetch Accounts
-        const accounts = await walletProvider?.request({
+        const accounts: { AELF: string[] } | undefined = await walletProvider?.request({
           method: MethodsBase.ACCOUNTS,
         });
         if (!accounts) throw new Error("No accounts");
-
-        const account = accounts?.tDVW?.[0];
+        console.log("accounts", accounts);
+        
+        const account = accounts?.AELF[0];
 
         if (!account) throw new Error("No account");
         console.log("accounts", accounts);
         connect(walletProvider as IPortkeyProvider);
-        // const proposalResponse = await nftContract?.callViewMethod<IProposals>(
-        //   "GetAllProposals",
-        //   ""
-        // );
-        // setProposals(proposalResponse?.data);
-        // alert("Fetched proposals");
       } catch (error) {
         console.error(error, "===error");
       }

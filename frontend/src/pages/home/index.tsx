@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 import { useEffect, useState } from "react";
 
-const HomePage = ({ provider }: { provider: IPortkeyProvider | null }) => {
+const HomePage = ({
+  provider,
+  currentWalletAddress,
+}: {
+  provider: IPortkeyProvider | null;
+  currentWalletAddress?: string;
+}) => {
   const navigate = useNavigate();
   const nftContract = useNFTSmartContract(provider);
   const [userNfts, setUserNfts] = useState<any[]>([]);
@@ -22,18 +28,19 @@ const HomePage = ({ provider }: { provider: IPortkeyProvider | null }) => {
 
         if (!accounts) throw new Error("No accounts");
 
-        const account = accounts?.tDVW?.[0];
+        const account = accounts?.AELF?.[0];
 
         if (!account) throw new Error("No account");
 
-        const nftResponse = await nftContract?.callViewMethod(
-          "GetNFTBalance",
-          account
-        );
+        // const nftResponse = await nftContract?.callViewMethod(
+        //   "GetNativeTokenInfo",
+        //   account
+        // );
+        // console.log("nftResponse", nftResponse);
 
-        if (nftResponse && nftResponse.data && nftResponse.data.length > 0) {
-          setUserNfts(nftResponse.data);
-        }
+        // if (nftResponse && nftResponse.data && nftResponse.data.length > 0) {
+        //   setUserNfts(nftResponse.data);
+        // }
         // setProposals(proposalResponse?.data);
       } catch (error) {
         console.error(error);
@@ -44,46 +51,42 @@ const HomePage = ({ provider }: { provider: IPortkeyProvider | null }) => {
   }, []);
   return (
     <div className="home-container">
-      <div className="dashboard-container container">
-        <div className="dashboard-card">
-          <h3>Total Available NFT</h3>
-          <p>5 NFTs</p>
-        </div>
-        <div className="dashboard-card">
-          <h3>Total Transfer NFT</h3>
-          <p>2 NFTs</p>
-        </div>
-        <div className="dashboard-card">
-          <h3>Total Received NFT</h3>
-          <p>3 NFTs</p>
-        </div>
-      </div>
       <div className="nft-collection-container">
         <div className="nft-collection-head">
-          <h2>Your NFT Collection</h2>
+          <h2>Your NFT Collections</h2>
           <Button
             className="header-button"
-            onClick={() => navigate("/create-nft")}
+            onClick={() =>
+              currentWalletAddress
+                ? navigate("/create-nft")
+                : alert("Please Connect Wallet First")
+            }
           >
-            Create NFT
+            Create NFT Collection
           </Button>
         </div>
 
-        <div className="nft-collection">
-          {NFT_IMAGES.slice(0, 5).map((image, index) => (
-            <div className="nft-card" key={index}>
-              <img src={image} alt={"nft- image" + index} />
-              <div className="nft-info"></div>
-              <div className="buy-container">
-                <Button
-                  onClick={() => navigate(`/transfer-nft?nft-id=${index}`)}
-                >
-                  Transfer NFT
-                </Button>
+        {currentWalletAddress ? (
+          <div className="nft-collection">
+            {NFT_IMAGES.slice(0, 5).map((image, index) => (
+              <div className="nft-card" key={index}>
+                <img src={image} alt={"nft- image" + index} />
+                <div className="nft-info"></div>
+                <div className="buy-container">
+                  <Button
+                    onClick={() => navigate(`/transfer-nft?nft-id=${index}`)}
+                  >
+                    Transfer NFT
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bordered-container">
+            <p>Please wallet connect first and Create a new NFT Collection and NFT Tokens</p>
+          </div>
+        )}
       </div>
     </div>
   );

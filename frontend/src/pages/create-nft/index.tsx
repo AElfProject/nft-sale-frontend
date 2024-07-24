@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
-import { MethodsBase, IPortkeyProvider } from "@portkey/provider-types";
+import { IPortkeyProvider } from "@portkey/provider-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -24,8 +24,10 @@ import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 // import useNFTSmartContract from "@/useNFTSmartContract";
 
 const formSchema = z.object({
-  name: z.string(),
+  tokenName: z.string(),
   symbol: z.string(),
+  totalSupply: z.number(),
+  decimals: z.number(),
 });
 
 interface INftInput {}
@@ -37,7 +39,6 @@ const CreateNftPage = ({
 }) => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
   const nftContract = useNFTSmartContract(provider);
-  const [hash, setHash] = useState<any>();
   const navigate = useNavigate();
 
   const handleReturnClick = () => {
@@ -56,26 +57,34 @@ const CreateNftPage = ({
     if (!provider) init();
   }, [provider]);
 
-  const createNewNft = async (nftName: string, symbol: string) => {
+  const createNewNft = async (values: {
+    tokenName: string;
+    symbol: string;
+    totalSupply: number;
+    decimals: number;
+  }) => {
     //Step F - Write Vote Yes Logic
     try {
       const createNtfInput: INftInput = {
-        name: nftName,
-        symbol: symbol,
+        tokenName: values.tokenName,
+        symbol: values.symbol,
+        totalSupply: values.totalSupply,
+        decimals: values.decimals,
+        issuer: currentWalletAddress,
+        isBurnable: true,
+        issueChainId: "AELF",
+        owner: currentWalletAddress,
       };
-console.log("createNtfInput",createNtfInput)
+      console.log("createNtfInput", createNtfInput);
       await nftContract?.callSendMethod(
-        "CreateNFTToken",
+        "Create",
         currentWalletAddress,
         createNtfInput
       );
       alert("New Nft Created");
-      setHash(true);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(error.message, "=====error");
-      if(error.message.includes("You closed")){
-         alert("You Rejected Transaction")
-      }
+      alert(error.message);
     }
   };
 
@@ -83,15 +92,16 @@ console.log("createNtfInput",createNtfInput)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      tokenName: "",
       symbol: "",
+      totalSupply: 10,
+      decimals: 1,
     },
   });
 
   //Step E - Write Create NFT Logic
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values", values);
-    createNewNft(values.name,values.symbol)
+    createNewNft(values);
   }
 
   return (
@@ -107,15 +117,12 @@ console.log("createNtfInput",createNtfInput)
               <div className="input-group">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="tokenName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NFT Name</FormLabel>
+                      <FormLabel>Token Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Title for Proposal"
-                          {...field}
-                        />
+                        <Input placeholder="Enter Token Name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -131,6 +138,45 @@ console.log("createNtfInput",createNtfInput)
                       <FormLabel>Symbol</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Symbol" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="input-group">
+                <FormField
+                  control={form.control}
+                  name="totalSupply"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Supply</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Total Supply"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="input-group">
+                <FormField
+                  control={form.control}
+                  name="decimals"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Decimals</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Decimals"
+                          type="number"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

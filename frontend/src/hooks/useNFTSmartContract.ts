@@ -5,19 +5,20 @@ const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
   const [smartContract, setSmartContract] =
     useState<ReturnType<IChain["getContract"]>>();
 
-  //Step A - Setup Portkey Wallet Provider
+  // Step A - Setup Portkey Wallet Provider
   useEffect(() => {
     (async () => {
       if (!provider) return null;
 
       try {
+        console.log("provider",provider)
         // 1. get the sidechain tDVW using provider.getChain
-        const chain = await provider?.getChain("tDVW");
+        const chain = await provider?.getChain("AELF");
         if (!chain) throw new Error("No chain");
-
+console.log("chain",chain)
         //Address of DAO Smart Contract
         //Replace with Address of Deployed Smart Contract
-        const address = "wq2mtnQ7kmPqnWNQeyqPcv3n8A6wucmFrDsakYhqoK1MzV7BN";
+        const address = "JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE";
 
         // 2. get the DAO contract
         const nftContract = chain?.getContract(address);

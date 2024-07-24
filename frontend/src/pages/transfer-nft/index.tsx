@@ -14,28 +14,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import "./create-nft.scss";
+import "./transfer-nft.scss";
 
 import detectProvider from "@portkey/detect-provider";
 import { Button } from "@/components/ui/button";
 import { NFT_IMAGES } from "@/lib/constant";
+import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 // import useNFTSmartContract from "@/useNFTSmartContract";
 
 const formSchema = z.object({
   address: z.string(),
-  title: z.string(),
-  symbol: z.string(),
+  amount: z.number(),
+  memo: z.string(),
 });
 
-const TransferNftPage = () => {
+const TransferNftPage = ({
+  currentWalletAddress,
+}: {
+  currentWalletAddress: string;
+}) => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  //   const nftContract = useNFTSmartContract(provider);
+  const nftContract = useNFTSmartContract(provider);
 
   const navigate = useNavigate();
 
   const location = useLocation();
   const [searchParams] = useSearchParams(location.search);
-  const nftIndex = searchParams.get("nft-id");
+  const nftSymbol = searchParams.get("nft-id");
 
   const handleReturnClick = () => {
     navigate("/");
@@ -56,12 +61,41 @@ const TransferNftPage = () => {
   //Step D - Configure NFT Form
   const form = useForm<z.infer<typeof formSchema>>({});
 
+  const transferNftToOtherAccount = async (values: {
+    address: string;
+    amount: number;
+    memo: string;
+  }) => {
+    if (!nftSymbol) {
+      alert("NFT Symbol is missing!");
+    }
+    //Step F - Write NFT Transfer Logic
+    try {
+      const transferNtfInput = {
+        to: values.address,
+        symbol: nftSymbol,
+        amount: +values.amount,
+        memo: values.memo,
+      };
+console.log("transferNtfInput",transferNtfInput)
+      // await nftContract?.callSendMethod(
+      //   "Transfer",
+      //   currentWalletAddress,
+      //   transferNtfInput
+      // );
+      alert("NFT Transfer Successful");
+    } catch (error: any) {
+      console.error(error.message, "=====error");
+      alert(error.message);
+    }
+  };
+
   //Step E - Write Create NFT Logic
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values", values);
+    transferNftToOtherAccount(values)
   }
 
-  const nftDetails = NFT_IMAGES[nftIndex ? Number(nftIndex) : 0];
+  const nftDetails = NFT_IMAGES[nftSymbol ? Number(nftSymbol) : 0];
 
   return (
     <div className="form-wrapper">
@@ -79,13 +113,50 @@ const TransferNftPage = () => {
               <div className="input-group">
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Wallet Address ( Receiver )</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter the wallet address of receiver"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="input-group">
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter the Amount"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="input-group">
+                <FormField
+                  control={form.control}
+                  name="memo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>memo</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter the memo"
                           {...field}
                         />
                       </FormControl>
