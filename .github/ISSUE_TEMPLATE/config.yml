@@ -8,3 +8,7 @@ issue_template:
     description: Create a new ticket for a new feature request.
     labels: ["enhancement"]
     template: feature_request.md
+  - name: 📋 Technical Workshop Preparation SOP
+    description: Create a new ticket for preparing for a technical workshop.
+    labels: ["documentation"]
+    template: sop_workshop.md
