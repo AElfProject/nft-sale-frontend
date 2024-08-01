@@ -65,8 +65,8 @@
   color: #888;
 }
 .submit-btn {
-  border-color: #646cff !important;
-  background-color: #646cff !important;
+  border-color: var(--app-purple) !important;
+  background-color: var(--app-purple) !important;
 }
 
 .button-container {
@@ -77,29 +77,10 @@
 }
 
 /* Styles for buttons */
-.submit-btn,
-.return-btn {
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.submit-btn {
-  background-color: #007bff;
-  color: white;
-}
 
 .return-btn {
   background-color: #6c757d;
   color: white;
-}
-
-.submit-btn:hover {
-  background-color: #0056b3;
 }
 
 .return-btn:hover {

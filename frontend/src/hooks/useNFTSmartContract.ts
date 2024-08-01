@@ -2,8 +2,12 @@ import { IPortkeyProvider, IChain } from "@portkey/provider-types";
 import { useEffect, useState } from "react";
 
 const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
-  const [smartContract, setSmartContract] =
+  const [mainChainSmartContract, setMainChainSmartContract] =
     useState<ReturnType<IChain["getContract"]>>();
+  const [sideChainSmartContract, setSideChainSmartContract] =
+    useState<ReturnType<IChain["getContract"]>>();
+  const [crossChainSmartContract, setCrossChainSmartContract] =
+  useState<ReturnType<IChain["getContract"]>>();
 
   // Step A - Setup Portkey Wallet Provider
   useEffect(() => {
@@ -11,25 +15,62 @@ const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
       if (!provider) return null;
 
       try {
-        console.log("provider",provider)
         // 1. get the sidechain tDVW using provider.getChain
         const chain = await provider?.getChain("AELF");
         if (!chain) throw new Error("No chain");
-console.log("chain",chain)
-        //Address of DAO Smart Contract
         //Replace with Address of Deployed Smart Contract
         const address = "JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE";
 
-        // 2. get the DAO contract
-        const nftContract = chain?.getContract(address);
-        setSmartContract(nftContract);
-      } catch (error) {
+        // 2. get the NFT MultiToken contract
+        const contract = chain?.getContract(address);
+        setMainChainSmartContract(contract);
+      } catch (error) { 
         console.log(error, "====error");
       }
     })();
   }, [provider]);
 
-  return smartContract;
+  useEffect(() => {
+    (async () => {
+      if (!provider) return null;
+
+      try {
+        // 1. get the sidechain tDVW using provider.getChain
+        const chain = await provider?.getChain("tDVW");
+        if (!chain) throw new Error("No chain");
+        //Replace with Address of Deployed Smart Contract
+        const address = "2PC7Jhb5V6iZXxz8uQUWvWubYkAoCVhtRGSL7VhTWX85R8DBuN";
+
+        // 2. get the NFT MultiToken contract
+        const contract = chain?.getContract(address);
+        setCrossChainSmartContract(contract);
+      } catch (error) { 
+        console.log(error, "====error");
+      }
+    })();
+  }, [provider]);
+
+  useEffect(() => {
+    (async () => {
+      if (!provider) return null;
+
+      try {
+        // 1. get the sidechain tDVW using provider.getChain
+        const chain = await provider?.getChain("tDVW");
+        if (!chain) throw new Error("No chain");
+        //Replace with Address of Deployed Smart Contract
+        const address = "ASh2Wt7nSEmYqnGxPPzp4pnVDU4uhj1XW9Se5VeZcX2UDdyjx";
+
+        // 2. get the NFT MultiToken contract
+        const contract = chain?.getContract(address);
+        setSideChainSmartContract(contract);
+      } catch (error) { 
+        console.log(error, "====error");
+      }
+    })();
+  }, [provider]);
+
+  return {mainChainSmartContract,sideChainSmartContract,crossChainSmartContract};
 };
 
 export default useNFTSmartContract;

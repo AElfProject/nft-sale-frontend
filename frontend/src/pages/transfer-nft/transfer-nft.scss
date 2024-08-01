@@ -82,19 +82,9 @@
       margin-top: 20px;
 
       /* Styles for buttons */
-      .submit-btn,
-      .return-btn {
-        padding: 10px 20px;
-        margin-right: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-      }
 
       .submit-btn {
-        background-color: #007bff;
+        background-color: var(--app-purple);
         color: white;
       }
 

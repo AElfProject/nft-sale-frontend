@@ -20,9 +20,9 @@ import detectProvider from "@portkey/detect-provider";
 import { Button } from "@/components/ui/button";
 import { NFT_IMAGES } from "@/lib/constant";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
-// import useNFTSmartContract from "@/useNFTSmartContract";
 
 const formSchema = z.object({
+  symbol: z.string(),
   address: z.string(),
   amount: z.number(),
   memo: z.string(),
@@ -34,8 +34,8 @@ const TransferNftPage = ({
   currentWalletAddress: string;
 }) => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  const nftContract = useNFTSmartContract(provider);
-
+  const {mainChainSmartContract } =
+  useNFTSmartContract(provider);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -65,24 +65,22 @@ const TransferNftPage = ({
     address: string;
     amount: number;
     memo: string;
+    symbol:string;
   }) => {
-    if (!nftSymbol) {
-      alert("NFT Symbol is missing!");
-    }
     //Step F - Write NFT Transfer Logic
     try {
       const transferNtfInput = {
         to: values.address,
-        symbol: nftSymbol,
+        symbol: values.symbol,
         amount: +values.amount,
         memo: values.memo,
       };
-console.log("transferNtfInput",transferNtfInput)
-      // await nftContract?.callSendMethod(
-      //   "Transfer",
-      //   currentWalletAddress,
-      //   transferNtfInput
-      // );
+      console.log("transferNtfInput", transferNtfInput);
+      await mainChainSmartContract?.callSendMethod(
+        "Transfer",
+        currentWalletAddress,
+        transferNtfInput
+      );
       alert("NFT Transfer Successful");
     } catch (error: any) {
       console.error(error.message, "=====error");
@@ -92,7 +90,7 @@ console.log("transferNtfInput",transferNtfInput)
 
   //Step E - Write Create NFT Logic
   function onSubmit(values: z.infer<typeof formSchema>) {
-    transferNftToOtherAccount(values)
+    transferNftToOtherAccount(values);
   }
 
   const nftDetails = NFT_IMAGES[nftSymbol ? Number(nftSymbol) : 0];
@@ -110,6 +108,24 @@ console.log("transferNtfInput",transferNtfInput)
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 proposal-form"
             >
+              <div className="input-group">
+                <FormField
+                  control={form.control}
+                  name="symbol"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nft Token Symbol</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter the wallet address of receiver"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="input-group">
                 <FormField
                   control={form.control}
@@ -155,10 +171,7 @@ console.log("transferNtfInput",transferNtfInput)
                     <FormItem>
                       <FormLabel>memo</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter the memo"
-                          {...field}
-                        />
+                        <Input placeholder="Enter the memo" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

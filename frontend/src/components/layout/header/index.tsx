@@ -4,7 +4,6 @@ import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
 import detectProvider from "@portkey/detect-provider";
 import { useNavigate } from "react-router-dom";
 import "./header.scss";
-import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 
 const ProfileButton = ({ onClick }: { onClick: () => void }) => (
   <svg
@@ -41,24 +40,6 @@ const Header = ({
   provider: IPortkeyProvider | null;
   setProvider: (p: IPortkeyProvider | null) => void;
 }) => {
-  const nftContract = useNFTSmartContract(provider);
-
-  const connect = async (walletProvider?: IPortkeyProvider) => {
-    //Step B - Connect Portkey Wallet
-    const accounts = await (walletProvider
-      ? walletProvider
-      : provider
-    )?.request({
-      method: MethodsBase.REQUEST_ACCOUNTS,
-    });
-    console.log("accounts", accounts);
-    const account = accounts?.AELF && accounts?.AELF[0];
-    if (account) {
-      setCurrentWalletAddress(account);
-      setIsConnected(true);
-    }
-    // alert("Successfully connected");
-  };
 
   const init = async () => {
     try {
@@ -86,6 +67,23 @@ const Header = ({
     } catch (error) {
       console.log(error, "=====error");
     }
+  };
+
+  const connect = async (walletProvider?: IPortkeyProvider) => {
+    //Step B - Connect Portkey Wallet
+    const accounts = await (walletProvider
+      ? walletProvider
+      : provider
+    )?.request({
+      method: MethodsBase.REQUEST_ACCOUNTS,
+    });
+    console.log("accounts", accounts);
+    const account = accounts?.AELF && accounts?.AELF[0];
+    if (account) {
+      setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
+      setIsConnected(true);
+    }
+    // alert("Successfully connected");
   };
 
   useEffect(() => {

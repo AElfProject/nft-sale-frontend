@@ -28,7 +28,7 @@ const HomePage = ({
 
         if (!accounts) throw new Error("No accounts");
 
-        const account = accounts?.AELF?.[0];
+        const account = accounts?.tDVW?.[0];
 
         if (!account) throw new Error("No account");
 
@@ -51,6 +51,10 @@ const HomePage = ({
   }, []);
   return (
     <div className="home-container">
+      <div className="marketplace-info">
+        <h1>NFTs</h1>
+        <h3>Create and Transfer Non-Fungible Tokens with AELF</h3>
+      </div>
       <div className="nft-collection-container">
         <div className="nft-collection-head">
           <h2>Your NFT Collections</h2>
@@ -84,7 +88,10 @@ const HomePage = ({
           </div>
         ) : (
           <div className="bordered-container">
-            <p>Please wallet connect first and Create a new NFT Collection and NFT Tokens</p>
+            <strong>
+              Please connect your Portkey Wallet and Create a new NFT Collection and
+              NFT Tokens
+            </strong>
           </div>
         )}
       </div>
