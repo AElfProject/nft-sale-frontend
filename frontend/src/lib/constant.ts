@@ -10,3 +10,5 @@ export const NFT_IMAGES = [
     "https://i.seadn.io/gcs/files/e083e197c7e4ef5e8febfe394857679f.png?auto=format&dpr=1&w=1000" ,
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG0wEO0ud0AhP7rtj0vQW6twI1bjuRqL1Upg&s",
 ]
+
+export const eForestNftHoldApi = "https://test.eforest.finance/api/app/nft/nft-infos-user-profile/myhold"

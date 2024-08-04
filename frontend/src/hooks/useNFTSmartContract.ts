@@ -6,8 +6,6 @@ const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
     useState<ReturnType<IChain["getContract"]>>();
   const [sideChainSmartContract, setSideChainSmartContract] =
     useState<ReturnType<IChain["getContract"]>>();
-  const [crossChainSmartContract, setCrossChainSmartContract] =
-  useState<ReturnType<IChain["getContract"]>>();
 
   // Step A - Setup Portkey Wallet Provider
   useEffect(() => {
@@ -39,26 +37,6 @@ const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
         const chain = await provider?.getChain("tDVW");
         if (!chain) throw new Error("No chain");
         //Replace with Address of Deployed Smart Contract
-        const address = "2PC7Jhb5V6iZXxz8uQUWvWubYkAoCVhtRGSL7VhTWX85R8DBuN";
-
-        // 2. get the NFT MultiToken contract
-        const contract = chain?.getContract(address);
-        setCrossChainSmartContract(contract);
-      } catch (error) { 
-        console.log(error, "====error");
-      }
-    })();
-  }, [provider]);
-
-  useEffect(() => {
-    (async () => {
-      if (!provider) return null;
-
-      try {
-        // 1. get the sidechain tDVW using provider.getChain
-        const chain = await provider?.getChain("tDVW");
-        if (!chain) throw new Error("No chain");
-        //Replace with Address of Deployed Smart Contract
         const address = "ASh2Wt7nSEmYqnGxPPzp4pnVDU4uhj1XW9Se5VeZcX2UDdyjx";
 
         // 2. get the NFT MultiToken contract
@@ -70,7 +48,7 @@ const useNFTSmartContract = (provider: IPortkeyProvider | null) => {
     })();
   }, [provider]);
 
-  return {mainChainSmartContract,sideChainSmartContract,crossChainSmartContract};
+  return {mainChainSmartContract,sideChainSmartContract};
 };
 
 export default useNFTSmartContract;

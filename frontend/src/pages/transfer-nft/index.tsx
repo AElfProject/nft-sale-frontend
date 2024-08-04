@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { IPortkeyProvider } from "@portkey/provider-types";
 import { useForm } from "react-hook-form";
@@ -20,9 +18,10 @@ import detectProvider from "@portkey/detect-provider";
 import { Button } from "@/components/ui/button";
 import { NFT_IMAGES } from "@/lib/constant";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
+import { toast } from "react-toastify";
+import { removeNotification } from "@/lib/utils";
 
 const formSchema = z.object({
-  symbol: z.string(),
   address: z.string(),
   amount: z.number(),
   memo: z.string(),
@@ -34,13 +33,24 @@ const TransferNftPage = ({
   currentWalletAddress: string;
 }) => {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  const {mainChainSmartContract } =
-  useNFTSmartContract(provider);
+  const [nftBalance, setNftBalance] = useState(0);
+  const { sideChainSmartContract } = useNFTSmartContract(provider);
   const navigate = useNavigate();
 
   const location = useLocation();
   const [searchParams] = useSearchParams(location.search);
-  const nftSymbol = searchParams.get("nft-id");
+  const nftSymbol = searchParams.get("nft-symbol");
+  const nftIndex = searchParams.get("nft-index");
+
+  const getBalanceOfNft = async (symbol: string) => {
+    // @ts-ignore
+    const { data }: { data: { balance: number } } =
+      await sideChainSmartContract?.callViewMethod("getBalance", {
+        symbol: symbol,
+        owner: currentWalletAddress,
+      });
+    setNftBalance(Number(data.balance));
+  };
 
   const handleReturnClick = () => {
     navigate("/");
@@ -58,33 +68,50 @@ const TransferNftPage = ({
     if (!provider) init();
   }, [provider]);
 
+  useEffect(() => {
+    if (nftSymbol && sideChainSmartContract) {
+      getBalanceOfNft(nftSymbol);
+    }
+  }, [nftSymbol,sideChainSmartContract]);
+
   //Step D - Configure NFT Form
   const form = useForm<z.infer<typeof formSchema>>({});
-
+  
   const transferNftToOtherAccount = async (values: {
     address: string;
     amount: number;
     memo: string;
-    symbol:string;
   }) => {
+    if(Number(values.amount) > nftBalance){
+      toast.error("Amount must be Less than or Equal to Supply Balance");
+      return
+    }
     //Step F - Write NFT Transfer Logic
+    const transferNFTLoadingId = toast.loading(
+      "Transfer Transaction Executing"
+    );
     try {
       const transferNtfInput = {
         to: values.address,
-        symbol: values.symbol,
+        symbol: nftSymbol,
         amount: +values.amount,
         memo: values.memo,
       };
-      console.log("transferNtfInput", transferNtfInput);
-      await mainChainSmartContract?.callSendMethod(
+      await sideChainSmartContract?.callSendMethod(
         "Transfer",
         currentWalletAddress,
         transferNtfInput
       );
-      alert("NFT Transfer Successful");
+      toast.update(transferNFTLoadingId, {
+        render: "NFT Transferred Successfully!",
+        type: "success",
+        isLoading: false,
+      });
+      removeNotification(transferNFTLoadingId);
+      handleReturnClick();
     } catch (error: any) {
       console.error(error.message, "=====error");
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -93,7 +120,7 @@ const TransferNftPage = ({
     transferNftToOtherAccount(values);
   }
 
-  const nftDetails = NFT_IMAGES[nftSymbol ? Number(nftSymbol) : 0];
+  const nftDetails = NFT_IMAGES[nftIndex ? Number(nftIndex) : 0];
 
   return (
     <div className="form-wrapper">
@@ -102,30 +129,16 @@ const TransferNftPage = ({
           <h2 className="form-title">Transfer NFT</h2>
           <div className="nft-card">
             <img src={nftDetails} alt={"nft- image"} />
+            <div className="nft-details">
+              <p>Symbol: <strong>{nftSymbol}</strong></p>
+              <p>Supply Balance: <strong>{nftBalance}</strong></p>
+            </div>
           </div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8 proposal-form"
             >
-              <div className="input-group">
-                <FormField
-                  control={form.control}
-                  name="symbol"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nft Token Symbol</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter the wallet address of receiver"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <div className="input-group">
                 <FormField
                   control={form.control}

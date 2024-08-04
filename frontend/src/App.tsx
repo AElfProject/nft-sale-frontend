@@ -8,6 +8,8 @@ import HomePage from "./pages/home";
 import "./app.scss";
 import CreateNftPage from "./pages/create-nft";
 import TransferNftPage from "./pages/transfer-nft";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -16,6 +18,7 @@ const App = () => {
 
   return (
     <div className="app-layout">
+      <ToastContainer />
       <Header
         isConnected={isConnected}
         currentWalletAddress={currentWalletAddress}

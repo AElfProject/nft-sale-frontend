@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
 * {
   margin: 0;
@@ -12,9 +12,9 @@
   --primary-text-color: #e6e6e6; /* Light text color */
   --secondary-text-color: #a9a9a9; /* Secondary text for less important info */
   --accent-color: #4ecca3; /* Accent color for buttons or interactive elements */
-  --app-purple: #ce45f2;
+  --app-purple: #1370DD;
   --app-dark-color: #333646;
-  --app-font: "Cabin", sans-serif;
+  --app-font: "Roboto", sans-serif;
 }
 
 html,
@@ -69,4 +69,9 @@ button.outline:hover {
   margin: 0 auto;
   overflow: auto;
   padding: 15px;
+}
+
+.app-layout{
+  width: 100vw;
+  padding-top: 70px;
 }

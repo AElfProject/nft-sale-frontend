@@ -1,6 +1,17 @@
 import { Button } from "@/components/ui/button";
-import "./profile.css";
 import { message } from "antd";
+import { useEffect, useState } from "react";
+import { IPortkeyProvider } from "@portkey/provider-types";
+import "./profile.scss";
+import useNFTSmartContract from "@/hooks/useNFTSmartContract";
+import detectProvider from "@portkey/detect-provider";
+import { useNavigate } from "react-router-dom";
+import { NFT_IMAGES } from "@/lib/constant";
+
+interface Nft {
+  nftSymbol: string;
+  balance?: number; // Adding an optional balance property for clarity
+}
 
 const CopyIcon = (props: any) => (
   <svg
@@ -39,6 +50,99 @@ const ProfilePage = ({
 }: {
   currentWalletAddress: string;
 }) => {
+  const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
+  const [userNfts, setUserNfts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { sideChainSmartContract } = useNFTSmartContract(provider);
+  const navigate = useNavigate();
+  // Function to get the balance of a specific NFT
+  const getBalanceOfNft = async (values: {
+    symbol: string;
+    owner: string;
+  }): Promise<number> => {
+    // @ts-ignore
+    const { data }: { data: { balance: number } } =
+      await sideChainSmartContract?.callViewMethod("getBalance", values);
+    return data.balance;
+  };
+
+  // Function to fetch balance information for an array of NFTs
+  const fetchNftBalances = async (
+    nfts: Nft[],
+    ownerAddress: string
+  ): Promise<Nft[]> => {
+    const nftDataWithBalances = await Promise.all(
+      nfts.map(async (nft) => {
+        const balance = await getBalanceOfNft({
+          symbol: nft.nftSymbol,
+          owner: ownerAddress,
+        });
+        return { ...nft, balance };
+      })
+    );
+
+    return nftDataWithBalances;
+  };
+
+  const fetchNftDetails = async () => {
+    try {
+      const response = await fetch(
+        "https://test.eforest.finance/api/app/nft/nft-infos-user-profile/myhold",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ChainList: ["tDVV"],
+            hasListingFlag: false,
+            hasAuctionFlag: false,
+            hasOfferFlag: false,
+            collectionIds: [],
+            address: currentWalletAddress,
+            sorting: "ListingTime DESC",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const responseData = await response.json();
+
+      const newNftData = await fetchNftBalances(
+        responseData.data.items,
+        currentWalletAddress as string
+      );
+
+      setUserNfts(newNftData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const init = async () => {
+    try {
+      setProvider(await detectProvider());
+    } catch (error) {
+      console.log(error, "=====error");
+    }
+  };
+
+  useEffect(() => {
+    if (!provider) init();
+  }, [provider]);
+
+  useEffect(() => {
+    // Step G - Use Effect to Fetch Proposals
+    if (currentWalletAddress && sideChainSmartContract) {
+      fetchNftDetails();
+    }
+  }, [currentWalletAddress, sideChainSmartContract]);
+
   return (
     <section className="profile-page">
       <div className="container profile-details">
@@ -64,7 +168,7 @@ const ProfilePage = ({
           className="header-button profile-button outline"
           onClick={() => {
             navigator.clipboard.writeText(currentWalletAddress);
-            message.success("address Copied")
+            message.success("address Copied");
           }}
         >
           {currentWalletAddress} <CopyIcon className="copy-icon" />
@@ -72,6 +176,76 @@ const ProfilePage = ({
       </div>
       <div className="container profile-nft-collection">
         <h3>Your NFT Collection</h3>
+        {currentWalletAddress ? (
+          <div className="nft-collection">
+            {userNfts.length > 0 ? (
+              userNfts.slice(0, 5).map((data, index) => (
+                <div
+                  className={
+                    userNfts.length > 3 ? "nft-card around" : "nft-card"
+                  }
+                  key={index}
+                >
+                  <img src={NFT_IMAGES[index + 1]} alt={"nft- image" + index} />
+                  <div className="nft-info">
+                    <p>{data.nftSymbol}</p>
+                  </div>
+
+                  <div className="nft-info-row">
+                    <span>Name:</span>
+                    <span>{data.tokenName}</span>
+                  </div>
+
+                  <div className="nft-info-row">
+                    <span>Collection Symbol:</span>
+                    <span>{data.collectionSymbol}</span>
+                  </div>
+
+                  <div className="nft-info-row">
+                    <span>Balance:</span>
+                    <span>{data.balance}</span>
+                  </div>
+
+                  <div className="nft-info-row">
+                    <span>Owner:</span>
+                    <span>{data.realOwner.address}</span>
+                  </div>
+
+                  <div className="buy-container">
+                    <Button
+                      onClick={() =>
+                        navigate(
+                          `/transfer-nft?nft-index=${index + 1}&nft-symbol=${
+                            data.nftSymbol
+                          }`
+                        )
+                      }
+                    >
+                      Transfer NFT
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : loading ? (
+              <div className="bordered-container">
+                <strong>Loading...</strong>
+              </div>
+            ) : (
+              <div className="bordered-container">
+                <strong>
+                  It's Look like you don't have any NFT on your wallet
+                </strong>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bordered-container">
+            <strong>
+              Please connect your Portkey Wallet and Create a new NFT Collection
+              and NFT Tokens
+            </strong>
+          </div>
+        )}
       </div>
     </section>
   );

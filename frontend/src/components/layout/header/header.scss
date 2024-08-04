@@ -1,10 +1,19 @@
 .app-navbar {
   width: 100vw;
   border-bottom: 1px solid var(--app-dark-color);
+  position: fixed;
+  left: 0;
+  backdrop-filter: blur(10px);
+  z-index: 1;
+  top: 0;
   .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .logo-image{
+      cursor: pointer;
+    }
     
     .right-wrapper {
       display: flex;

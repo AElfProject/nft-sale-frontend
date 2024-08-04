@@ -26,19 +26,28 @@
     .nft-card {
       position: relative;
       padding: 10px;
-      max-width: 200px;
+      max-width: 250px;
       background-color: #242634;
-      border-radius: 20px;
-      height: 255px;
+      border-radius: 15px;
       margin: 0 auto;
       margin-bottom: 2rem;
 
       img {
         width: 100%;
-        height: 100%;
+        height: 300px;
         object-fit: cover;
         border-radius: 12px;
         cursor: pointer;
+      }
+      .nft-details{
+        margin-top: 5px;
+        background-color: #fff1;
+        padding: 10px 15px;
+        border-radius: 10px;
+        
+        p{
+          font-size: 14px;
+        }
       }
     }
 

@@ -4,6 +4,7 @@ import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
 import detectProvider from "@portkey/detect-provider";
 import { useNavigate } from "react-router-dom";
 import "./header.scss";
+import { toast } from "react-toastify";
 
 const ProfileButton = ({ onClick }: { onClick: () => void }) => (
   <svg
@@ -41,6 +42,23 @@ const Header = ({
   setProvider: (p: IPortkeyProvider | null) => void;
 }) => {
 
+
+  const connect = async (walletProvider?: IPortkeyProvider) => {
+    //Step B - Connect Portkey Wallet
+    const accounts = await (walletProvider
+      ? walletProvider
+      : provider
+    )?.request({
+      method: MethodsBase.REQUEST_ACCOUNTS,
+    });
+    const account = accounts?.AELF && accounts?.AELF[0];
+    if (account) {
+      setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
+      setIsConnected(true);
+    }
+    toast.success("Successfully connected");
+  };
+  
   const init = async () => {
     try {
       const walletProvider = await detectProvider({ providerName: "Portkey" });
@@ -54,12 +72,11 @@ const Header = ({
           method: MethodsBase.ACCOUNTS,
         });
         if (!accounts) throw new Error("No accounts");
-        console.log("accounts", accounts);
-        
+
         const account = accounts?.AELF[0];
 
         if (!account) throw new Error("No account");
-        console.log("accounts", accounts);
+
         connect(walletProvider as IPortkeyProvider);
       } catch (error) {
         console.error(error, "===error");
@@ -67,23 +84,6 @@ const Header = ({
     } catch (error) {
       console.log(error, "=====error");
     }
-  };
-
-  const connect = async (walletProvider?: IPortkeyProvider) => {
-    //Step B - Connect Portkey Wallet
-    const accounts = await (walletProvider
-      ? walletProvider
-      : provider
-    )?.request({
-      method: MethodsBase.REQUEST_ACCOUNTS,
-    });
-    console.log("accounts", accounts);
-    const account = accounts?.AELF && accounts?.AELF[0];
-    if (account) {
-      setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
-      setIsConnected(true);
-    }
-    // alert("Successfully connected");
   };
 
   useEffect(() => {
@@ -97,6 +97,7 @@ const Header = ({
       <div className="container">
         <img
           src="/src/assets/aelf_logo.png"
+          className="logo-image"
           alt="Aelf Logo"
           onClick={() => navigate("/")}
         />

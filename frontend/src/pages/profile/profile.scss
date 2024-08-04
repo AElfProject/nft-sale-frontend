@@ -1,54 +1,42 @@
-.home-container {
+.profile-page {
+  padding: 100px 0 0;
+  width: 100vw;
+}
+
+.profile-page .profile-details {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  padding-inline: 40px;
+}
 
-  .marketplace-info {
-    width: 100%;
-    max-width: 1200px;
-    background: #242634
-      url("https://solostakers.com/wp-content/uploads/2024/01/What-is-NFT-Staking-and-How-to-Earn-Passive-Income-From-NFTs_.jpg")
-      no-repeat;
-    background-size: cover;
-    background-position: bottom;
-    margin: 0 auto;
-    padding: 30px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-height: 400px;
-    border-radius: 20px;
-    margin-top: 40px !important;
-  }
+.profile-page .profile-details svg {
+  height: 100px;
+  width: 100px;
+  margin-top: 20px;
+}
 
-  .marketplace-info,
-  .nft-collection-container {
-    width: 100%;
-    max-width: 1200px;
-    padding: 40px 15px 100px;
+.profile-page .profile-details .profile-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 15px;
+}
 
-    .nft-collection-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #252838;
-      padding-bottom: 10px;
-      h2 {
-        font-weight: 500;
-      }
-      .button-wrapper {
-        display: flex;
-        gap: 20px;
-        button {
-          border-color: var(--app-purple);
-          background-color: var(--app-purple);
+.profile-page .profile-details .profile-button .copy-icon {
+  height: 20px;
+  width: 20px;
+  margin-top: 0;
+}
 
-          &:disabled{
-            cursor: not-allowed;
-            opacity: .5;
-          }
-        }
-      }
-    }
+.profile-button:hover .copy-icon {
+    color: #535bf2;
+}
+
+.profile-nft-collection{
+    margin-top: 30px;
+    padding-left: 50px;
 
     .nft-collection {
       display: flex;
@@ -133,11 +121,8 @@
         font-size: 18px;
       }
     }
-  }
-
-  h1 {
-    font-size: 2.8rem; /* Larger for main heading */
-    font-weight: 700; /* Bolder for importance */
-    margin-bottom: 1rem;
-  }
+}
+.profile-nft-collection h3{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #252838;
 }
