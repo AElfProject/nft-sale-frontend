@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { NFT_IMAGES } from "@/lib/constant";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 import { toast } from "react-toastify";
-import { removeNotification } from "@/lib/utils";
+import { delay, removeNotification } from "@/lib/utils";
 
 const formSchema = z.object({
   address: z.string(),
@@ -108,6 +108,7 @@ const TransferNftPage = ({
         isLoading: false,
       });
       removeNotification(transferNFTLoadingId);
+      await delay(3000);
       handleReturnClick();
     } catch (error: any) {
       console.error(error.message, "=====error");

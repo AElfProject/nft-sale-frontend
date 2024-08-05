@@ -56,7 +56,7 @@ const Header = ({
       setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
       setIsConnected(true);
     }
-    toast.success("Successfully connected");
+    !walletProvider && toast.success("Successfully connected");
   };
   
   const init = async () => {

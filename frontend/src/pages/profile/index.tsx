@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { message } from "antd";
 import { useEffect, useState } from "react";
 import { IPortkeyProvider } from "@portkey/provider-types";
 import "./profile.scss";
@@ -7,6 +6,7 @@ import useNFTSmartContract from "@/hooks/useNFTSmartContract";
 import detectProvider from "@portkey/detect-provider";
 import { useNavigate } from "react-router-dom";
 import { NFT_IMAGES } from "@/lib/constant";
+import { toast } from "react-toastify";
 
 interface Nft {
   nftSymbol: string;
@@ -168,7 +168,7 @@ const ProfilePage = ({
           className="header-button profile-button outline"
           onClick={() => {
             navigator.clipboard.writeText(currentWalletAddress);
-            message.success("address Copied");
+            toast.success("address Copied");
           }}
         >
           {currentWalletAddress} <CopyIcon className="copy-icon" />
