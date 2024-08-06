@@ -83,6 +83,10 @@ const CreateNftPage = ({
     new AElf.providers.HttpProvider("https://tdvw-test-node.aelf.io")
   );
 
+  const aelf = new AElf(
+    new AElf.providers.HttpProvider("https://aelf-test-node.aelf.io")
+  );
+
   const handleReturnClick = () => {
     navigate("/");
   };
@@ -94,8 +98,6 @@ const CreateNftPage = ({
       console.log(error, "=====error");
     }
   };
-
-
 
   useEffect(() => {
     if (!provider) init();
@@ -182,68 +184,18 @@ const CreateNftPage = ({
     return await aelf.chain.contractAt(crossChainContractAddress, wallet);
   };
 
-  // step - 2
-  const validateTokenInfoExist = async (
-    values: INftInput,
-    validateLoadingId: any
+  //  - This function create a Collection on SideChain
+  const createCollectionOnSideChain = async (
+    transactionId: string,
+    signedTx: string,
+    BlockNumber: number
   ) => {
     try {
-      const aelf = new AElf(
-        new AElf.providers.HttpProvider("https://aelf-test-node.aelf.io")
-      );
-
-      const validateInput = {
-        symbol: values.symbol,
-        tokenName: values.tokenName,
-        totalSupply: values.totalSupply,
-        decimals: values.decimals,
-        issuer: currentWalletAddress,
-        isBurnable: true,
-        issueChainId: sidechain_from_chain_id,
-        owner: currentWalletAddress,
-      };
-      const aelfTokenContract = await getTokenContract(aelf, wallet);
-
-      const signedTx =
-        aelfTokenContract.ValidateTokenInfoExists.getSignedTx(validateInput);
-
-      const { TransactionId: VALIDATE_TXID } = await aelf.chain.sendTransaction(
-        signedTx
-      );
-
-      let VALIDATE_TXRESULT = await aelf.chain.getTxResult(VALIDATE_TXID);
-      console.log(VALIDATE_TXRESULT, "VALIDATE_TXRESULT");
-
-      // if SideChain index has a MainChain height greater than validateTokenInfoExist's
-      let heightDone = false;
-      const tdvwCrossChainContract = await getCrossChainContract(tdvw, wallet);
-
-      while (!heightDone) {
-        const sideIndexMainHeight = (
-          await tdvwCrossChainContract.GetParentChainHeight.call()
-        ).value;
-        if (
-          sideIndexMainHeight >= VALIDATE_TXRESULT.Transaction.RefBlockNumber
-        ) {
-          VALIDATE_TXRESULT = await aelf.chain.getTxResult(VALIDATE_TXID);
-          heightDone = true;
-        }
-      }
-
-      console.log("VALIDATE_TXRESULT", VALIDATE_TXRESULT);
-
-      toast.update(validateLoadingId, {
-        render: "Validating Token Successfully Executed",
-        type: "success",
-        isLoading: false,
-      });
-      removeNotification(validateLoadingId);
-
       const crossChainLoadingId = toast.loading(
         "Creating Collection on SideChain..."
       );
 
-      const merklePath = await getMerklePathByTxId(aelf, VALIDATE_TXID);
+      const merklePath = await getMerklePathByTxId(aelf, transactionId);
 
       const tdvwTokenContract = await getTokenContract(tdvw, wallet);
 
@@ -251,7 +203,7 @@ const CreateNftPage = ({
 
       const CROSS_CHAIN_CREATE_TOKEN_PARAMS = {
         fromChainId: mainchain_from_chain_id,
-        parentChainHeight: "" + VALIDATE_TXRESULT.BlockNumber,
+        parentChainHeight: "" + BlockNumber,
         // @ts-ignore
         transactionBytes: Buffer.from(byteArray, "hex").toString("base64"),
         merklePath,
@@ -290,40 +242,138 @@ const CreateNftPage = ({
         }
       }
       return "success";
-    } catch (error: any) {
-      console.error(error, "=====error in validateTokenInfoExist");
-      toast.error(`error in validateTokenInfoExist ${error.message}`);
+    } catch (error) {
+      console.log("error====", error);
       return "error";
     }
   };
 
-  // step - 1
-  const createNftCollection = async (values: {
+  // step 2 - Validate token information existence
+  // This function validates if the token collection information already exists on the main blockchain.
+  const validateNftCollectionInfo = async (values: INftInput) => {
+    try {
+
+      // Start Loading before initiate the transaction
+      const validateLoadingId = toast.loading(
+        <CustomToast
+          title="Transaction is getting validated on aelf blockchain. Please wait!"
+          message="Validation means transaction runs through a consensus algorithm to be selected or rejected. Once the status changes process will complete. It usually takes some time in distributed systems."
+        />
+      );
+
+      // Create an object with the necessary information for token validation.
+      const validateInput = {
+        symbol: values.symbol, // Symbol of the token
+        tokenName: values.tokenName, // Name of the token
+        totalSupply: values.totalSupply, // Total supply of the token
+        decimals: values.decimals, // Decimals of the token
+        issuer: currentWalletAddress, // Address of the token issuer
+        isBurnable: true, // Indicates if the token can be burned
+        issueChainId: mainchain_from_chain_id, // ID of the issuing chain
+        owner: currentWalletAddress, // Owner's wallet address
+      };
+
+      // get mainnet contract
+      const aelfTokenContract = await getTokenContract(aelf, wallet);
+
+      // prepare Sign the transaction using contract method (ValidateTokenInfoExists Function)
+      const signedTx =
+        aelfTokenContract.ValidateTokenInfoExists.getSignedTx(validateInput);
+
+      // send the transaction using signed Transaction
+      const { TransactionId: VALIDATE_TXID } = await aelf.chain.sendTransaction(
+        signedTx
+      );
+
+      // get Validate Result
+      let VALIDATE_TXRESULT = await aelf.chain.getTxResult(VALIDATE_TXID);
+
+      // we need to wait till our latest index Hight grater than or equal to our Transaction block number
+      let heightDone = false;
+      const tdvwCrossChainContract = await getCrossChainContract(tdvw, wallet);
+
+      while (!heightDone) {
+        // get latest index Hight
+        const sideIndexMainHeight = (
+          await tdvwCrossChainContract.GetParentChainHeight.call()
+        ).value;
+        if (
+          // check the latest index Hight is grater than or equal 
+          sideIndexMainHeight >= VALIDATE_TXRESULT.Transaction.RefBlockNumber
+        ) {
+          VALIDATE_TXRESULT = await aelf.chain.getTxResult(VALIDATE_TXID);
+          heightDone = true;
+        }
+      }
+
+      console.log("VALIDATE_TXRESULT", VALIDATE_TXRESULT);
+
+      // Update the Loading Message
+      toast.update(validateLoadingId, {
+        render: "Validating Token Successfully Executed",
+        type: "success",
+        isLoading: false,
+      });
+      // Remove the Loading Message
+      removeNotification(validateLoadingId);
+
+      // Return necessary details.
+      return {
+        transactionId: VALIDATE_TXID,
+        signedTx: signedTx,
+        BlockNumber: VALIDATE_TXRESULT.BlockNumber,
+      };
+    } catch (error: any) {
+      // If there's an error, log it and alert the user.
+      console.error(error.message, "=====error in validateTokenInfoExist");
+      alert(`error in validateTokenInfoExist ${error.message}`);
+      return "error";
+    }
+  };
+
+  // step - 1 Create New NFT Collection on MainChain Function
+  const createNftCollectionOnMainChain = async (values: {
     tokenName: string;
     symbol: string;
     totalSupply: string;
     decimals: string;
   }) => {
     try {
+      const createLoadingId = toast.loading("Creating NFT Collection..");
+
+      // Create an object with the necessary information for the new NFT collection.
       const createNtfInput: INftInput = {
-        tokenName: values.tokenName,
-        symbol: values.symbol,
-        totalSupply: values.totalSupply,
-        decimals: values.decimals,
-        issuer: currentWalletAddress,
-        isBurnable: true,
-        issueChainId: sidechain_from_chain_id,
-        owner: currentWalletAddress,
+        tokenName: values.tokenName, // Name of the nft Collection
+        symbol: values.symbol, // Symbol of the token (You have to get it from your PortKey wallet on NFT seed from NFT section)
+        totalSupply: values.totalSupply, // Total supply of the token
+        decimals: values.decimals, // Decimals of the token
+        issuer: currentWalletAddress, // Address of the token issuer
+        isBurnable: true, // Indicates if the token can be burned
+        issueChainId: mainchain_from_chain_id, // ID of the issuing chain
+        owner: currentWalletAddress, // Owner's wallet address
       };
 
+      // Call the smart contract method to create the new NFT collection on the main chain.
       const result = await mainChainSmartContract?.callSendMethod(
         "Create",
         currentWalletAddress,
         createNtfInput
       );
+
+      // Log the result of the creation for debugging purposes.
       console.log("========= result of createNewNft =========", result);
+
+      toast.update(createLoadingId, {
+        render: "NFT Collection Created Successfully On MainChain",
+        type: "success",
+        isLoading: false,
+      });
+      removeNotification(createLoadingId);
+
+      // Return the input data for further use.
       return createNtfInput;
     } catch (error: any) {
+      // If there's an error, log it and alert the user.
       console.error(error.message, "=====error");
       toast.error(error.message);
       return "error";
@@ -380,56 +430,36 @@ const CreateNftPage = ({
     }
   };
 
-  const createNFTOnMainChain = async (values: {
-    tokenName: string;
-    symbol: string;
-    totalSupply: string;
-  }) => {
-    let createMainChainNFTLoadingId;
-
+  const createNftTokenOnSideChain = async (values: INftValidateResult) => {
     try {
-      createMainChainNFTLoadingId = toast.loading(
-        "Creating NFT on MainChain..."
+      const createSideChainNFTLoadingId = toast.loading(
+        "Creating NFT on SideChain..."
       );
-      const createNtfMainChainInput = {
-        tokenName: values.tokenName,
-        symbol: values.symbol,
-        totalSupply: values.totalSupply,
-        issuer: currentWalletAddress,
-        isBurnable: true,
-        issueChainId: sidechain_from_chain_id,
-        owner: currentWalletAddress,
-        externalInfo: {},
+
+      const CROSS_CHAIN_CREATE_TOKEN_PARAMS = {
+        fromChainId: mainchain_from_chain_id,
+        parentChainHeight: values.parentChainHeight,
+        transactionBytes: Buffer.from(values.signedTx, "hex").toString(
+          "base64"
+        ),
+        merklePath: values.merklePath,
       };
 
-      const resultMainchain = await mainChainSmartContract?.callSendMethod(
-        "Create",
+      await sideChainSmartContract?.callSendMethod(
+        "CrossChainCreateToken",
         currentWalletAddress,
-        createNtfMainChainInput
-      );
-      console.log(
-        "========= result of createNewNft =========",
-        resultMainchain
+        CROSS_CHAIN_CREATE_TOKEN_PARAMS
       );
 
-      toast.update(createMainChainNFTLoadingId, {
-        render: "NFT Created Successfully on MainChain",
+      toast.update(createSideChainNFTLoadingId, {
+        render: "NFT Created Successfully On SideChain",
         type: "success",
         isLoading: false,
       });
-      removeNotification(createMainChainNFTLoadingId);
+      removeNotification(createSideChainNFTLoadingId);
       return "success";
-    } catch (error: any) {
-      console.log("=====error", error);
-      if (!createMainChainNFTLoadingId) {
-        return "error";
-      }
-      toast.update(createMainChainNFTLoadingId, {
-        render: error.message,
-        type: "error",
-        isLoading: false,
-      });
-      removeNotification(createMainChainNFTLoadingId,5000);
+    } catch (error) {
+      console.log("error====", error);
       return "error";
     }
   };
@@ -441,10 +471,6 @@ const CreateNftPage = ({
           title="Transaction is getting validated on aelf blockchain. Please wait!"
           message="Validation means transaction runs through a consensus algorithm to be selected or rejected. Once the status changes process will complete. It usually takes some time in distributed systems."
         />
-      );
-
-      const aelf = new AElf(
-        new AElf.providers.HttpProvider("https://aelf-test-node.aelf.io")
       );
 
       const validateInput = {
@@ -513,36 +539,56 @@ const CreateNftPage = ({
     }
   };
 
-  const createNftTokenOnSideChain = async (values: INftValidateResult) => {
-    try {
-      const createSideChainNFTLoadingId = toast.loading(
-        "Creating NFT on SideChain..."
-      );
+  const createNFTOnMainChain = async (values: {
+    tokenName: string;
+    symbol: string;
+    totalSupply: string;
+  }) => {
+    let createMainChainNFTLoadingId;
 
-      const CROSS_CHAIN_CREATE_TOKEN_PARAMS = {
-        fromChainId: mainchain_from_chain_id,
-        parentChainHeight: values.parentChainHeight,
-        transactionBytes: Buffer.from(values.signedTx, "hex").toString(
-          "base64"
-        ),
-        merklePath: values.merklePath,
+    try {
+      createMainChainNFTLoadingId = toast.loading(
+        "Creating NFT on MainChain..."
+      );
+      const createNtfMainChainInput = {
+        tokenName: values.tokenName,
+        symbol: values.symbol,
+        totalSupply: values.totalSupply,
+        issuer: currentWalletAddress,
+        isBurnable: true,
+        issueChainId: sidechain_from_chain_id,
+        owner: currentWalletAddress,
+        externalInfo: {},
       };
 
-      await sideChainSmartContract?.callSendMethod(
-        "CrossChainCreateToken",
+      const resultMainchain = await mainChainSmartContract?.callSendMethod(
+        "Create",
         currentWalletAddress,
-        CROSS_CHAIN_CREATE_TOKEN_PARAMS
+        createNtfMainChainInput
+      );
+      console.log(
+        "========= result of createNewNft =========",
+        resultMainchain
       );
 
-      toast.update(createSideChainNFTLoadingId, {
-        render: "NFT Created Successfully On SideChain",
+      toast.update(createMainChainNFTLoadingId, {
+        render: "NFT Created Successfully on MainChain",
         type: "success",
         isLoading: false,
       });
-      removeNotification(createSideChainNFTLoadingId);
+      removeNotification(createMainChainNFTLoadingId);
       return "success";
-    } catch (error) {
-      console.log("error====", error);
+    } catch (error: any) {
+      console.log("=====error", error);
+      if (!createMainChainNFTLoadingId) {
+        return "error";
+      }
+      toast.update(createMainChainNFTLoadingId, {
+        render: error.message,
+        type: "error",
+        isLoading: false,
+      });
+      removeNotification(createMainChainNFTLoadingId, 5000);
       return "error";
     }
   };
@@ -595,28 +641,28 @@ const CreateNftPage = ({
       await createNftToken(values);
     } else {
       // create NFT Collection
-      const createLoadingId = toast.loading("Creating NFT Collection..");
 
-      const createResult = await createNftCollection(values);
-
-      toast.update(createLoadingId, {
-        render: "NFT Collection Created Successfully On MainChain",
-        type: "success",
-        isLoading: false,
-      });
-      removeNotification(createLoadingId);
+      const createResult = await createNftCollectionOnMainChain(values);
 
       if (createResult === "error") {
         setTransactionStatus(false);
         return;
       }
-      const validateLoadingId = toast.loading(
-        <CustomToast
-          title="Transaction is getting validated on aelf blockchain. Please wait!"
-          message="Validation means transaction runs through a consensus algorithm to be selected or rejected. Once the status changes process will complete. It usually takes some time in distributed systems."
-        />
+
+      const validateCollectionResult = await validateNftCollectionInfo(
+        createResult
       );
-      await validateTokenInfoExist(createResult, validateLoadingId);
+
+      if (validateCollectionResult === "error") {
+        setTransactionStatus(false);
+        return;
+      }
+
+      await createCollectionOnSideChain(
+        validateCollectionResult.transactionId,
+        validateCollectionResult.signedTx,
+        validateCollectionResult.BlockNumber
+      );
     }
   };
 

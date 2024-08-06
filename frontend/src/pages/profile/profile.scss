@@ -1,43 +1,41 @@
 .profile-page {
   padding: 100px 0 0;
   width: 100vw;
-}
-
-.profile-page .profile-details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-inline: 40px;
-}
-
-.profile-page .profile-details svg {
-  height: 100px;
-  width: 100px;
-  margin-top: 20px;
-}
-
-.profile-page .profile-details .profile-button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  padding: 15px;
-}
-
-.profile-page .profile-details .profile-button .copy-icon {
-  height: 20px;
-  width: 20px;
-  margin-top: 0;
-}
-
-.profile-button:hover .copy-icon {
-    color: #535bf2;
-}
-
-.profile-nft-collection{
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 40px;
+    svg {
+      height: 100px;
+      width: 100px;
+      margin-top: 20px;
+    }
+    .profile-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 15px;
+      border-color: #1371dd60;
+      color: #1371dd;
+      .copy-icon {
+        height: 20px;
+        width: 20px;
+        margin-top: 0;
+        &:hover {
+          color: var(--app-purple);
+        }
+      }
+    }
+  }
+  .profile-nft-collection {
     margin-top: 30px;
     padding-left: 50px;
-
+    h3 {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1371dd4b;
+    }
     .nft-collection {
       display: flex;
       align-items: center;
@@ -52,8 +50,10 @@
         position: relative;
         padding: 10px;
         width: 300px;
-        background-color: #242634;
+        background-color: white;
         border-radius: 20px;
+        border: 1px solid #1371dd2d;
+        box-shadow: 0px 1px 5px 2px #1371dd27;
         img {
           height: 300px;
           width: 100%;
@@ -74,6 +74,10 @@
           backdrop-filter: blur(5px);
           background-color: #fff1;
           border-radius: 0 0 12px 12px;
+
+          p {
+            color: white;
+          }
         }
         .nft-info-row {
           margin-top: 10px;
@@ -93,7 +97,7 @@
           align-items: center;
           justify-content: space-between;
           padding: 10px;
-          background-color: #fff1;
+          background-color: #1371dd15;
           margin-top: 5px;
           border-radius: 10px;
           margin-top: 20px;
@@ -121,8 +125,5 @@
         font-size: 18px;
       }
     }
-}
-.profile-nft-collection h3{
-    padding-bottom: 10px;
-    border-bottom: 1px solid #252838;
+  }
 }

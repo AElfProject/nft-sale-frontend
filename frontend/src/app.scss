@@ -9,11 +9,12 @@
 :root {
   --primary-bg-color: #0d0c22; /* Dark background color */
   --secondary-bg-color: #0d0c22; /* Slightly lighter for card backgrounds */
-  --primary-text-color: #e6e6e6; /* Light text color */
+  --primary-text-color: #222326; /* Light text color */
   --secondary-text-color: #a9a9a9; /* Secondary text for less important info */
   --accent-color: #4ecca3; /* Accent color for buttons or interactive elements */
   --app-purple: #1370DD;
   --app-dark-color: #333646;
+  --toastify-color-success: #1370DD !important;
   --app-font: "Roboto", sans-serif;
 }
 
@@ -26,7 +27,7 @@ body {
 }
 
 body {
-  background-color: var(--primary-bg-color);
+  background-color: white;
   color: var(--primary-text-color);
   font-family: var(--app-font);
   display: flex;
@@ -38,7 +39,7 @@ body::-webkit-scrollbar{
 
 button {
   border: none;
-  color: var(--primary-text-color);
+  color: white;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;

@@ -44,7 +44,7 @@ const Header = ({
 
 
   const connect = async (walletProvider?: IPortkeyProvider) => {
-    //Step B - Connect Portkey Wallet
+    // Step C - Connect Portkey Wallet
     const accounts = await (walletProvider
       ? walletProvider
       : provider
