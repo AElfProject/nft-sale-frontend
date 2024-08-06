@@ -132,15 +132,6 @@ const CreateNftPage = ({
   };
 
   // step - 3
-  function hexStringToByteArray(hexString: string) {
-    const byteArray = [];
-    for (let i = 0; i < hexString.length; i += 2) {
-      byteArray.push(parseInt(hexString.substr(i, 2), 16));
-    }
-    return byteArray;
-  }
-
-  // step - 3
   const getMerklePathByTxId = async (aelf: any, txId: string) => {
     let VALIDATE_MERKLEPATH;
     try {
@@ -199,13 +190,11 @@ const CreateNftPage = ({
 
       const tdvwTokenContract = await getTokenContract(tdvw, wallet);
 
-      const byteArray = hexStringToByteArray(signedTx);
-
       const CROSS_CHAIN_CREATE_TOKEN_PARAMS = {
         fromChainId: mainchain_from_chain_id,
         parentChainHeight: "" + BlockNumber,
         // @ts-ignore
-        transactionBytes: Buffer.from(byteArray, "hex").toString("base64"),
+        transactionBytes: Buffer.from(signedTx, "hex").toString("base64"),
         merklePath,
       };
       const signedTx2 =
@@ -269,7 +258,7 @@ const CreateNftPage = ({
         decimals: values.decimals, // Decimals of the token
         issuer: currentWalletAddress, // Address of the token issuer
         isBurnable: true, // Indicates if the token can be burned
-        issueChainId: mainchain_from_chain_id, // ID of the issuing chain
+        issueChainId: sidechain_from_chain_id, // ID of the issuing chain
         owner: currentWalletAddress, // Owner's wallet address
       };
 
@@ -349,7 +338,7 @@ const CreateNftPage = ({
         decimals: values.decimals, // Decimals of the token
         issuer: currentWalletAddress, // Address of the token issuer
         isBurnable: true, // Indicates if the token can be burned
-        issueChainId: mainchain_from_chain_id, // ID of the issuing chain
+        issueChainId: sidechain_from_chain_id, // ID of the issuing chain
         owner: currentWalletAddress, // Owner's wallet address
       };
 
@@ -560,7 +549,7 @@ const CreateNftPage = ({
         owner: currentWalletAddress,
         externalInfo: {},
       };
-
+console.log("createNtfMainChainInput",createNtfMainChainInput)
       const resultMainchain = await mainChainSmartContract?.callSendMethod(
         "Create",
         currentWalletAddress,
