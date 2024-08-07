@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
 import { IPortkeyProvider } from "@portkey/provider-types";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
   Form,
   FormControl,
@@ -13,13 +14,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import "./transfer-nft.scss";
-
-import detectProvider from "@portkey/detect-provider";
 import { Button } from "@/components/ui/button";
 import { NFT_IMAGES } from "@/lib/constant";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
-import { toast } from "react-toastify";
 import { delay, removeNotification } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   address: z.string(),
@@ -28,12 +27,12 @@ const formSchema = z.object({
 });
 
 const TransferNftPage = ({
+  provider,
   currentWalletAddress,
 }: {
+  provider: IPortkeyProvider | null;
   currentWalletAddress: string;
 }) => {
-  const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
-  const [nftBalance, setNftBalance] = useState(0);
   const { sideChainSmartContract } = useNFTSmartContract(provider);
   const navigate = useNavigate();
 
@@ -41,52 +40,33 @@ const TransferNftPage = ({
   const [searchParams] = useSearchParams(location.search);
   const nftSymbol = searchParams.get("nft-symbol");
   const nftIndex = searchParams.get("nft-index");
-
-  const getBalanceOfNft = async (symbol: string) => {
-    // @ts-ignore
-    const { data }: { data: { balance: number } } =
-      await sideChainSmartContract?.callViewMethod("getBalance", {
-        symbol: symbol,
-        owner: currentWalletAddress,
-      });
-    setNftBalance(Number(data.balance));
-  };
+  const nftBalance = searchParams.get("nft-balance") || 0;
 
   const handleReturnClick = () => {
     navigate("/");
   };
 
-  const init = async () => {
-    try {
-      setProvider(await detectProvider());
-    } catch (error) {
-      console.log(error, "=====error");
-    }
-  };
+  // Configure NFT Transfer Form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      address: "",
+      amount: 0,
+      memo: "",
+    },
+  });
 
-  useEffect(() => {
-    if (!provider) init();
-  }, [provider]);
-
-  useEffect(() => {
-    if (nftSymbol && sideChainSmartContract) {
-      getBalanceOfNft(nftSymbol);
-    }
-  }, [nftSymbol,sideChainSmartContract]);
-
-  //Step D - Configure NFT Form
-  const form = useForm<z.infer<typeof formSchema>>({});
-  
+  // Transfer NFT to Other Wallet
   const transferNftToOtherAccount = async (values: {
     address: string;
     amount: number;
     memo: string;
   }) => {
-    if(Number(values.amount) > nftBalance){
+    if (Number(values.amount) > Number(nftBalance)) {
       toast.error("Amount must be Less than or Equal to Supply Balance");
-      return
+      return;
     }
-    //Step F - Write NFT Transfer Logic
+
     const transferNFTLoadingId = toast.loading(
       "Transfer Transaction Executing"
     );
@@ -116,7 +96,7 @@ const TransferNftPage = ({
     }
   };
 
-  //Step E - Write Create NFT Logic
+  // Handle Transfer Submit Form
   function onSubmit(values: z.infer<typeof formSchema>) {
     transferNftToOtherAccount(values);
   }
@@ -131,8 +111,12 @@ const TransferNftPage = ({
           <div className="nft-card">
             <img src={nftDetails} alt={"nft- image"} />
             <div className="nft-details">
-              <p>Symbol: <strong>{nftSymbol}</strong></p>
-              <p>Supply Balance: <strong>{nftBalance}</strong></p>
+              <p>
+                Symbol: <strong>{nftSymbol}</strong>
+              </p>
+              <p>
+                Supply Balance: <strong>{nftBalance}</strong>
+              </p>
             </div>
           </div>
           <Form {...form}>

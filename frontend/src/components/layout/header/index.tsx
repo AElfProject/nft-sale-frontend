@@ -41,23 +41,6 @@ const Header = ({
   provider: IPortkeyProvider | null;
   setProvider: (p: IPortkeyProvider | null) => void;
 }) => {
-
-
-  const connect = async (walletProvider?: IPortkeyProvider) => {
-    // Step C - Connect Portkey Wallet
-    const accounts = await (walletProvider
-      ? walletProvider
-      : provider
-    )?.request({
-      method: MethodsBase.REQUEST_ACCOUNTS,
-    });
-    const account = accounts?.AELF && accounts?.AELF[0];
-    if (account) {
-      setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
-      setIsConnected(true);
-    }
-    !walletProvider && toast.success("Successfully connected");
-  };
   
   const init = async () => {
     try {
@@ -86,6 +69,22 @@ const Header = ({
     }
   };
 
+    // Step C - Connect Portkey Wallet
+    const connect = async (walletProvider?: IPortkeyProvider) => {
+      const accounts = await (walletProvider
+        ? walletProvider
+        : provider
+      )?.request({
+        method: MethodsBase.REQUEST_ACCOUNTS,
+      });
+      const account = accounts?.AELF && accounts?.AELF[0];
+      if (account) {
+        setCurrentWalletAddress(account.replace(/^ELF_/, '').replace(/_AELF$/, ''));
+        setIsConnected(true);
+      }
+      !walletProvider && toast.success("Successfully connected");
+    };
+    
   useEffect(() => {
     if (!provider) init();
   }, [provider]);
@@ -96,7 +95,7 @@ const Header = ({
     <header className="app-navbar">
       <div className="container">
         <img
-          src="/src/assets/aelf_logo.png"
+          src="/src/assets/aelf_logo.svg"
           className="logo-image"
           alt="Aelf Logo"
           onClick={() => navigate("/")}

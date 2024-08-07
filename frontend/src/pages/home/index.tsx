@@ -7,7 +7,7 @@ import "./home.scss";
 import { NFT_IMAGES } from "@/lib/constant";
 import { Button } from "@/components/ui/button";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
-import { fetchNftDetails } from "@/lib/commonFunctions";
+import { fetchUserNftData } from "@/lib/commonFunctions";
 
 const HomePage = ({
   provider,
@@ -21,8 +21,9 @@ const HomePage = ({
   const [loading, setLoading] = useState(true);
   const { sideChainSmartContract } = useNFTSmartContract(provider);
 
+  // get NFT Data from User's wallet
   const getNFTData = async () => {
-    const result = await fetchNftDetails(
+    const result = await fetchUserNftData(
       currentWalletAddress as string,
       sideChainSmartContract
     );
@@ -32,8 +33,8 @@ const HomePage = ({
     setLoading(false);
   };
 
+  // Use Effect to Fetch NFTs
   useEffect(() => {
-    // Step G - Use Effect to Fetch NFTs
     if (currentWalletAddress && sideChainSmartContract) {
       getNFTData();
     }
@@ -108,9 +109,7 @@ const HomePage = ({
                   <Button
                     onClick={() =>
                       navigate(
-                        `/transfer-nft?nft-index=${index + 1}&nft-symbol=${
-                          data.nftSymbol
-                        }`
+                        `/transfer-nft?nft-index=${index + 1}&nft-symbol=${data.nftSymbol}&nft-balance=${data.balance}`
                       )
                     }
                   >

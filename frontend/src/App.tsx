@@ -34,7 +34,7 @@ const App = () => {
             <Route
               path="/profile"
               element={
-                <ProfilePage currentWalletAddress={currentWalletAddress} />
+                <ProfilePage provider={provider} currentWalletAddress={currentWalletAddress} />
               }
             />
             <Route
@@ -43,7 +43,7 @@ const App = () => {
                 <CreateNftPage currentWalletAddress={currentWalletAddress} />
               }
             />
-            <Route path="/transfer-nft" element={<TransferNftPage currentWalletAddress={currentWalletAddress}/>} />
+            <Route path="/transfer-nft" element={<TransferNftPage provider={provider} currentWalletAddress={currentWalletAddress}/>} />
           </Fragment>
         )}
       </Routes>

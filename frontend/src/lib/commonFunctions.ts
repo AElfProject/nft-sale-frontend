@@ -39,7 +39,8 @@ const fetchNftBalances = async (
   return nftDataWithBalances;
 };
 
-export const fetchNftDetails = async (
+// fetch NFT Data from eforest API
+export const fetchUserNftData = async (
   currentWalletAddress: string,
   sideChainSmartContract: any
 ) => {

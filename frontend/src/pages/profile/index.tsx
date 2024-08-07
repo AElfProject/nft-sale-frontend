@@ -3,15 +3,10 @@ import { useEffect, useState } from "react";
 import { IPortkeyProvider } from "@portkey/provider-types";
 import "./profile.scss";
 import useNFTSmartContract from "@/hooks/useNFTSmartContract";
-import detectProvider from "@portkey/detect-provider";
 import { useNavigate } from "react-router-dom";
 import { NFT_IMAGES } from "@/lib/constant";
 import { toast } from "react-toastify";
-
-interface Nft {
-  nftSymbol: string;
-  balance?: number; // Adding an optional balance property for clarity
-}
+import { fetchUserNftData } from "@/lib/commonFunctions";
 
 const CopyIcon = (props: any) => (
   <svg
@@ -46,100 +41,33 @@ const CopyIcon = (props: any) => (
 );
 
 const ProfilePage = ({
+  provider,
   currentWalletAddress,
 }: {
+  provider: IPortkeyProvider | null;
   currentWalletAddress: string;
 }) => {
-  const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
   const [userNfts, setUserNfts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { sideChainSmartContract } = useNFTSmartContract(provider);
   const navigate = useNavigate();
-  // Function to get the balance of a specific NFT
-  const getBalanceOfNft = async (values: {
-    symbol: string;
-    owner: string;
-  }): Promise<number> => {
-    // @ts-ignore
-    const { data }: { data: { balance: number } } =
-      await sideChainSmartContract?.callViewMethod("getBalance", values);
-    return data.balance;
-  };
 
-  // Function to fetch balance information for an array of NFTs
-  const fetchNftBalances = async (
-    nfts: Nft[],
-    ownerAddress: string
-  ): Promise<Nft[]> => {
-    const nftDataWithBalances = await Promise.all(
-      nfts.map(async (nft) => {
-        const balance = await getBalanceOfNft({
-          symbol: nft.nftSymbol,
-          owner: ownerAddress,
-        });
-        return { ...nft, balance };
-      })
+  // get NFT Data from User's wallet
+  const getNFTData = async () => {
+    const result = await fetchUserNftData(
+      currentWalletAddress as string,
+      sideChainSmartContract
     );
-
-    return nftDataWithBalances;
-  };
-
-  const fetchNftDetails = async () => {
-    try {
-      const response = await fetch(
-        "https://test.eforest.finance/api/app/nft/nft-infos-user-profile/myhold",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ChainList: ["tDVV"],
-            hasListingFlag: false,
-            hasAuctionFlag: false,
-            hasOfferFlag: false,
-            collectionIds: [],
-            address: currentWalletAddress,
-            sorting: "ListingTime DESC",
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const responseData = await response.json();
-
-      const newNftData = await fetchNftBalances(
-        responseData.data.items,
-        currentWalletAddress as string
-      );
-
-      setUserNfts(newNftData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    if (result !== "error") {
+      setUserNfts(result);
     }
+    setLoading(false);
   };
 
-  const init = async () => {
-    try {
-      setProvider(await detectProvider());
-    } catch (error) {
-      console.log(error, "=====error");
-    }
-  };
-
+  // Use Effect to Fetch NFTs
   useEffect(() => {
-    if (!provider) init();
-  }, [provider]);
-
-  useEffect(() => {
-    // Step G - Use Effect to Fetch Proposals
     if (currentWalletAddress && sideChainSmartContract) {
-      fetchNftDetails();
+      getNFTData();
     }
   }, [currentWalletAddress, sideChainSmartContract]);
 
@@ -168,14 +96,14 @@ const ProfilePage = ({
           className="header-button profile-button outline"
           onClick={() => {
             navigator.clipboard.writeText(currentWalletAddress);
-            toast.success("address Copied");
+            toast.success("Wallet Address Copied");
           }}
         >
           {currentWalletAddress} <CopyIcon className="copy-icon" />
         </Button>
       </div>
       <div className="container profile-nft-collection">
-        <h3>Your NFT Collection</h3>
+        <h2>Your NFT Tokens</h2>
         {currentWalletAddress ? (
           <div className="nft-collection">
             {userNfts.length > 0 ? (

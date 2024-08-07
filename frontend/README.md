@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-Frontend of our [Voting dApp](https://learn.aelf.dev/docs/tutorial/stackup/frontend/).
+Frontend of our [NFT dApp](https://docs.aelf.dev/quick-start/developers).
 
 ## Pre-requisites
 
@@ -32,5 +32,5 @@ Now that you're set up, you're ready to start the quest! Follow the steps as out
 
 ## Preview of Voting dApp
 
-![image](assets/Developer_DAO_Landing_Page.jpg)
+![image](assets/Developer_NFT_Landing_Page.png)
 
