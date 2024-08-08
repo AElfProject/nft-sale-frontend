@@ -95,7 +95,7 @@ const Header = ({
     <header className="app-navbar">
       <div className="container">
         <img
-          src="/src/assets/aelf_logo.svg"
+          src="/aelf_logo.svg"
           className="logo-image"
           alt="Aelf Logo"
           onClick={() => navigate("/")}

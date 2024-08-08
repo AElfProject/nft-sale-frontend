@@ -141,6 +141,28 @@ const CreateNftPage = ({
     return await aelf.chain.contractAt(tokenContractAddress, wallet);
   };
 
+  // Get CrossChain Contract
+  const getCrossChainContract = async (aelf:any, wallet: any) => {
+    const crossChainContractName = "AElf.ContractNames.CrossChain";
+  
+    // get chain status
+    const chainStatus = await aelf.chain.getChainStatus();
+    // get genesis contract address
+    const GenesisContractAddress = chainStatus.GenesisContractAddress;
+    // get genesis contract instance
+    const zeroContract = await aelf.chain.contractAt(
+      GenesisContractAddress,
+      wallet
+    );
+    // Get contract address by the read only method `GetContractAddressByName` of genesis contract
+    const crossChainContractAddress =
+      await zeroContract.GetContractAddressByName.call(
+        AElf.utils.sha256(crossChainContractName)
+      );
+  
+    return await aelf.chain.contractAt(crossChainContractAddress, wallet);
+  };
+
   //============== Create NFT Collection Steps =================//
 
   // step 1 - Create New NFT Collection on MainChain Function
@@ -276,16 +298,18 @@ const CreateNftPage = ({
   // This function fetches the current height of the parent blockchain.
   const GetParentChainHeight = async () => {
     try {
+      const tdvwCrossChainContract = await getCrossChainContract(tdvw, wallet);
       // Call the smart contract method to get the parent chain height.
-      const result = await sideChainSmartContract?.callViewMethod("GetParentChainHeight","");  
+      const result = await tdvwCrossChainContract.GetParentChainHeight.call() 
       // Return the parent chain height if it exists, otherwise return an empty string.
-      return result ? (result.data.value as string) : "";
+      return result ? (result.value as string) : "";
     } catch (error: any) {
       // If there's an error, log it and return an error status.
       console.error(error, "=====error in GetParentChainHeight");
       return "error";
     }
   };
+
 
   // step 4 - Fetch the Merkle path by Transaction Id
   const getMerklePathByTxId = async (aelf: any, txId: string) => {
